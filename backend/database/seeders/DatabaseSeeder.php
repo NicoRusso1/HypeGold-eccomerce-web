@@ -15,7 +15,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(AdminUserSeeder::class);
+        $this->call([
+            AdminUserSeeder::class,
+            CatalogSeeder::class,
+        ]);
 
         // Cliente de prueba para desarrollo local (password: "password").
         User::factory()->create([
