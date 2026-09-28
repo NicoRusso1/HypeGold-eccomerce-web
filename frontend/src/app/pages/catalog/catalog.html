@@ -1,0 +1,104 @@
+<section class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+  <h1 class="font-display text-3xl font-semibold text-hg-black">
+    {{ categoriaSlug() ? 'Catálogo' : 'Todos los productos' }}
+  </h1>
+
+  <form [formGroup]="filterForm" (ngSubmit)="aplicarFiltros()" class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+    <input
+      formControlName="search"
+      type="text"
+      placeholder="Buscar por nombre..."
+      class="rounded-full border border-gold-200 px-4 py-2 text-sm focus:border-gold-400 focus:outline-none lg:col-span-2"
+    />
+
+    <select
+      formControlName="material"
+      class="rounded-full border border-gold-200 px-4 py-2 text-sm focus:border-gold-400 focus:outline-none"
+    >
+      <option value="">Todos los materiales</option>
+      @for (material of materiales; track material) {
+        <option [value]="material">{{ material }}</option>
+      }
+    </select>
+
+    <input
+      formControlName="min_price"
+      type="number"
+      min="0"
+      placeholder="Precio mín."
+      class="rounded-full border border-gold-200 px-4 py-2 text-sm focus:border-gold-400 focus:outline-none"
+    />
+
+    <input
+      formControlName="max_price"
+      type="number"
+      min="0"
+      placeholder="Precio máx."
+      class="rounded-full border border-gold-200 px-4 py-2 text-sm focus:border-gold-400 focus:outline-none"
+    />
+
+    <select
+      formControlName="sort"
+      class="rounded-full border border-gold-200 px-4 py-2 text-sm focus:border-gold-400 focus:outline-none sm:col-span-2 lg:col-span-2"
+    >
+      <option value="recientes">Más recientes</option>
+      <option value="precio_asc">Precio: menor a mayor</option>
+      <option value="precio_desc">Precio: mayor a menor</option>
+      <option value="nombre">Nombre</option>
+    </select>
+
+    <div class="flex gap-2 sm:col-span-2 lg:col-span-3">
+      <button
+        type="submit"
+        class="rounded-full bg-gold-500 px-6 py-2 text-sm font-semibold text-hg-black transition hover:bg-gold-400"
+      >
+        Filtrar
+      </button>
+      <button
+        type="button"
+        (click)="limpiarFiltros()"
+        class="rounded-full border border-gold-300 px-6 py-2 text-sm font-medium text-hg-charcoal transition hover:border-gold-500"
+      >
+        Limpiar
+      </button>
+    </div>
+  </form>
+
+  @if (loading()) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Cargando productos...</p>
+  } @else if (error()) {
+    <p class="mt-10 text-center text-red-500">No pudimos cargar los productos. Probá de nuevo en un momento.</p>
+  } @else if (products().length === 0) {
+    <p class="mt-10 text-center text-hg-charcoal/60">No encontramos productos con esos filtros.</p>
+  } @else {
+    <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (product of products(); track product.id) {
+        <app-product-card [product]="product" />
+      }
+    </div>
+
+    @if (meta() && meta()!.last_page > 1) {
+      <div class="mt-10 flex items-center justify-center gap-4">
+        <button
+          type="button"
+          [disabled]="meta()!.current_page <= 1"
+          (click)="irAPagina(meta()!.current_page - 1)"
+          class="rounded-full border border-gold-300 px-4 py-1.5 text-sm font-medium text-hg-charcoal transition hover:border-gold-500 disabled:opacity-40"
+        >
+          Anterior
+        </button>
+        <span class="text-sm text-hg-charcoal/70">
+          Página {{ meta()!.current_page }} de {{ meta()!.last_page }}
+        </span>
+        <button
+          type="button"
+          [disabled]="meta()!.current_page >= meta()!.last_page"
+          (click)="irAPagina(meta()!.current_page + 1)"
+          class="rounded-full border border-gold-300 px-4 py-1.5 text-sm font-medium text-hg-charcoal transition hover:border-gold-500 disabled:opacity-40"
+        >
+          Siguiente
+        </button>
+      </div>
+    }
+  }
+</section>
