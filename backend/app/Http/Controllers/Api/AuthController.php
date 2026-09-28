@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Auth\ForgotPasswordRequest;
 use App\Http\Requests\Api\Auth\LoginRequest;
 use App\Http\Requests\Api\Auth\RegisterRequest;
+use App\Http\Requests\Api\Auth\ResetPasswordRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use OpenApi\Attributes as OA;
 
@@ -180,6 +183,89 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Sesión cerrada correctamente.']);
+    }
+
+    /**
+     * Envía (si el email existe) un correo con el enlace para restablecer
+     * la contraseña. Responde igual exista o no la cuenta, para no filtrar
+     * qué emails están registrados.
+     */
+    #[OA\Post(
+        path: '/forgot-password',
+        summary: 'Solicitar recuperación de contraseña',
+        description: 'Envía un email con un enlace para restablecer la contraseña, si el email está registrado.',
+        tags: ['Autenticación'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['email'],
+                properties: [new OA\Property(property: 'email', type: 'string', format: 'email', example: 'nico@hypegold.com')],
+                type: 'object',
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Solicitud procesada (siempre, exista o no el email)',
+                content: new OA\JsonContent(
+                    properties: [new OA\Property(property: 'message', type: 'string', example: 'Si el email existe, te enviamos instrucciones para recuperar tu contraseña.')],
+                    type: 'object',
+                ),
+            ),
+        ],
+    )]
+    public function forgotPassword(ForgotPasswordRequest $request)
+    {
+        Password::sendResetLink($request->validated());
+
+        return response()->json([
+            'message' => 'Si el email existe, te enviamos instrucciones para recuperar tu contraseña.',
+        ]);
+    }
+
+    /**
+     * Restablece la contraseña usando el token recibido por email.
+     */
+    #[OA\Post(
+        path: '/reset-password',
+        summary: 'Restablecer contraseña',
+        description: 'Cambia la contraseña usando el token enviado por email.',
+        tags: ['Autenticación'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['token', 'email', 'password', 'password_confirmation'],
+                properties: [
+                    new OA\Property(property: 'token', type: 'string'),
+                    new OA\Property(property: 'email', type: 'string', format: 'email', example: 'nico@hypegold.com'),
+                    new OA\Property(property: 'password', type: 'string', format: 'password'),
+                    new OA\Property(property: 'password_confirmation', type: 'string', format: 'password'),
+                ],
+                type: 'object',
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Contraseña restablecida'),
+            new OA\Response(response: 422, description: 'Token inválido o vencido'),
+        ],
+    )]
+    public function resetPassword(ResetPasswordRequest $request)
+    {
+        $status = Password::reset(
+            $request->validated(),
+            function (User $user, string $password) {
+                $user->update(['password' => Hash::make($password)]);
+                $user->tokens()->delete();
+            },
+        );
+
+        if ($status !== Password::PASSWORD_RESET) {
+            throw ValidationException::withMessages([
+                'email' => [__($status)],
+            ]);
+        }
+
+        return response()->json(['message' => 'Tu contraseña se restableció correctamente.']);
     }
 
     /**
