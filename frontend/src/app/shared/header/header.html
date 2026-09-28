@@ -30,12 +30,25 @@
         <span class="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold-500 px-1 text-[10px] font-semibold text-hg-ivory">0</span>
       </button>
 
-      <a
-        routerLink="/cuenta/registro"
-        class="rounded-full border border-gold-300 px-4 py-1.5 text-sm font-medium text-hg-black transition hover:border-gold-500 hover:text-gold-600"
-      >
-        Ingresar
-      </a>
+      @if (authService.isLoggedIn()) {
+        <span class="hidden text-sm text-hg-charcoal sm:inline">
+          Hola, {{ authService.currentUser()?.name?.split(' ')?.[0] }}
+        </span>
+        <button
+          type="button"
+          (click)="logout()"
+          class="rounded-full border border-gold-300 px-4 py-1.5 text-sm font-medium text-hg-black transition hover:border-gold-500 hover:text-gold-600"
+        >
+          Salir
+        </button>
+      } @else {
+        <a
+          routerLink="/cuenta/ingresar"
+          class="rounded-full border border-gold-300 px-4 py-1.5 text-sm font-medium text-hg-black transition hover:border-gold-500 hover:text-gold-600"
+        >
+          Ingresar
+        </a>
+      }
     </div>
   </div>
 </header>
