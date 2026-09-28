@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, catchError, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, User } from '../models/user.model';
 
@@ -12,6 +12,11 @@ export interface RegisterPayload {
   email: string;
   password: string;
   password_confirmation: string;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -29,10 +34,24 @@ export class AuthService {
       .pipe(tap((response) => this.setSession(response)));
   }
 
-  logout(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-    this.currentUserSignal.set(null);
+  login(payload: LoginPayload): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${environment.apiUrl}/login`, payload)
+      .pipe(tap((response) => this.setSession(response)));
+  }
+
+  /**
+   * Cierra la sesión. Intenta avisarle al backend para revocar el token;
+   * si la petición falla (p. ej. sin conexión), igual limpia la sesión local.
+   */
+  logout(): Observable<unknown> {
+    return this.http.post(`${environment.apiUrl}/logout`, {}).pipe(
+      tap(() => this.clearSession()),
+      catchError(() => {
+        this.clearSession();
+        return of(null);
+      }),
+    );
   }
 
   getToken(): string | null {
@@ -43,6 +62,12 @@ export class AuthService {
     localStorage.setItem(TOKEN_KEY, response.token);
     localStorage.setItem(USER_KEY, JSON.stringify(response.user));
     this.currentUserSignal.set(response.user);
+  }
+
+  private clearSession(): void {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    this.currentUserSignal.set(null);
   }
 
   private readStoredUser(): User | null {
