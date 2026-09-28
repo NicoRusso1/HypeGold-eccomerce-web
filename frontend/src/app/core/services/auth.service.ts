@@ -19,6 +19,17 @@ export interface LoginPayload {
   password: string;
 }
 
+export interface ForgotPasswordPayload {
+  email: string;
+}
+
+export interface ResetPasswordPayload {
+  token: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
@@ -40,6 +51,14 @@ export class AuthService {
       .pipe(tap((response) => this.setSession(response)));
   }
 
+  forgotPassword(payload: ForgotPasswordPayload): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/forgot-password`, payload);
+  }
+
+  resetPassword(payload: ResetPasswordPayload): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${environment.apiUrl}/reset-password`, payload);
+  }
+
   /**
    * Cierra la sesión. Intenta avisarle al backend para revocar el token;
    * si la petición falla (p. ej. sin conexión), igual limpia la sesión local.
@@ -56,6 +75,15 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);
+  }
+
+  /**
+   * Actualiza el usuario guardado localmente (p. ej. tras editar el perfil),
+   * sin tocar el token.
+   */
+  updateStoredUser(user: User): void {
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    this.currentUserSignal.set(user);
   }
 
   private setSession(response: AuthResponse): void {
