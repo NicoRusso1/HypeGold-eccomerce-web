@@ -5,7 +5,6 @@ Proyecto de e-commerce de joyas para **HypeGold Joyas** (Concordia, Entre Ríos)
 ## Estructura del repositorio
 
 ```
-hypegold/
 ├── backend/    # API REST en Laravel 12 + Sanctum + Swagger
 ├── frontend/   # SPA en Angular + Tailwind CSS
 └── docs/       # Documentación del proyecto (presentación, assets)
@@ -32,6 +31,13 @@ php artisan serve
 ```
 
 La documentación de la API queda disponible en `http://localhost:8000/api/documentation`.
+
+`php artisan migrate --seed` crea dos usuarios de prueba (solo para desarrollo local):
+
+| Rol | Email | Contraseña |
+|---|---|---|
+| Administrador | `admin@hypegold.com` | `password` |
+| Cliente | `cliente@hypegold.com` | `password` |
 
 ### Frontend
 

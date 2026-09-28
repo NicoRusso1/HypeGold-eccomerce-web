@@ -15,11 +15,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call(AdminUserSeeder::class);
 
+        // Cliente de prueba para desarrollo local (password: "password").
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Cliente de Prueba',
+            'email' => 'cliente@hypegold.com',
         ]);
     }
 }
