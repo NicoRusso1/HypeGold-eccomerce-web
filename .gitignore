@@ -1,0 +1,40 @@
+# Backend (Laravel)
+/backend/vendor
+/backend/node_modules
+/backend/public/hot
+/backend/public/storage
+/backend/public/build
+/backend/storage/*.key
+/backend/.env
+/backend/.env.backup
+/backend/.env.production
+/backend/.phpunit.result.cache
+/backend/Homestead.json
+/backend/Homestead.yaml
+/backend/auth.json
+/backend/npm-debug.log
+/backend/yarn-error.log
+/backend/storage/framework/cache/*
+!/backend/storage/framework/cache/.gitkeep
+/backend/storage/framework/sessions/*
+!/backend/storage/framework/sessions/.gitkeep
+/backend/storage/framework/views/*
+!/backend/storage/framework/views/.gitkeep
+/backend/storage/logs/*
+!/backend/storage/logs/.gitkeep
+/backend/bootstrap/cache/*
+!/backend/bootstrap/cache/.gitignore
+
+# Frontend (Angular)
+/frontend/node_modules
+/frontend/dist
+/frontend/.angular
+/frontend/.env
+
+# Editores / SO
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.log
