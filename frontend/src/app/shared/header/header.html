@@ -31,9 +31,12 @@
       </button>
 
       @if (authService.isLoggedIn()) {
-        <span class="hidden text-sm text-hg-charcoal sm:inline">
+        <a
+          routerLink="/cuenta/perfil"
+          class="hidden text-sm text-hg-charcoal transition hover:text-gold-600 sm:inline"
+        >
           Hola, {{ authService.currentUser()?.name?.split(' ')?.[0] }}
-        </span>
+        </a>
         <button
           type="button"
           (click)="logout()"

@@ -58,6 +58,15 @@ export class AuthService {
     return localStorage.getItem(TOKEN_KEY);
   }
 
+  /**
+   * Actualiza el usuario guardado localmente (p. ej. tras editar el perfil),
+   * sin tocar el token.
+   */
+  updateStoredUser(user: User): void {
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    this.currentUserSignal.set(user);
+  }
+
   private setSession(response: AuthResponse): void {
     localStorage.setItem(TOKEN_KEY, response.token);
     localStorage.setItem(USER_KEY, JSON.stringify(response.user));

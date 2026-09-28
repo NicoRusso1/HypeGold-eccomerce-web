@@ -1,0 +1,138 @@
+<section class="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+  <h1 class="font-display text-3xl font-semibold text-hg-black">Mi perfil</h1>
+  <p class="mt-1 text-sm text-hg-charcoal/70">Actualizá tus datos y tu contraseña.</p>
+
+  <!-- Datos del perfil -->
+  <div class="mt-8 rounded-2xl border border-gold-200/60 bg-white p-8 shadow-sm">
+    <h2 class="font-display text-lg font-semibold text-hg-black">Mis datos</h2>
+
+    @if (profileSuccess()) {
+      <p class="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
+        Tus datos se guardaron correctamente.
+      </p>
+    }
+    @if (profileErrors()['general']) {
+      <p class="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        {{ profileErrors()['general'][0] }}
+      </p>
+    }
+
+    <form [formGroup]="profileForm" (ngSubmit)="submitProfile()" class="mt-6 space-y-4">
+      <div>
+        <label for="name" class="block text-sm font-medium text-hg-charcoal">Nombre</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+        />
+        @if (fieldError('profile', 'name'); as error) {
+          <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div>
+        <label for="email" class="block text-sm font-medium text-hg-charcoal">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+        />
+        @if (fieldError('profile', 'email'); as error) {
+          <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div>
+        <label for="phone" class="block text-sm font-medium text-hg-charcoal">Teléfono</label>
+        <input
+          id="phone"
+          type="tel"
+          formControlName="phone"
+          placeholder="+54 9 345 404 0162"
+          class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+        />
+        @if (fieldError('profile', 'phone'); as error) {
+          <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="savingProfile()"
+        class="rounded-full bg-gold-500 px-6 py-2.5 text-sm font-semibold text-hg-black transition hover:bg-gold-400 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {{ savingProfile() ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Cambio de contraseña -->
+  <div class="mt-8 rounded-2xl border border-gold-200/60 bg-white p-8 shadow-sm">
+    <h2 class="font-display text-lg font-semibold text-hg-black">Cambiar contraseña</h2>
+
+    @if (passwordSuccess()) {
+      <p class="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
+        Tu contraseña se actualizó correctamente.
+      </p>
+    }
+    @if (passwordErrors()['general']) {
+      <p class="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        {{ passwordErrors()['general'][0] }}
+      </p>
+    }
+
+    <form [formGroup]="passwordForm" (ngSubmit)="submitPassword()" class="mt-6 space-y-4">
+      <div>
+        <label for="current_password" class="block text-sm font-medium text-hg-charcoal">Contraseña actual</label>
+        <input
+          id="current_password"
+          type="password"
+          formControlName="current_password"
+          autocomplete="current-password"
+          class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+        />
+        @if (fieldError('password', 'current_password'); as error) {
+          <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div>
+        <label for="new_password" class="block text-sm font-medium text-hg-charcoal">Contraseña nueva</label>
+        <input
+          id="new_password"
+          type="password"
+          formControlName="password"
+          autocomplete="new-password"
+          class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+        />
+        @if (fieldError('password', 'password'); as error) {
+          <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div>
+        <label for="new_password_confirmation" class="block text-sm font-medium text-hg-charcoal">Repetir contraseña nueva</label>
+        <input
+          id="new_password_confirmation"
+          type="password"
+          formControlName="password_confirmation"
+          autocomplete="new-password"
+          class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+        />
+        @if (fieldError('password', 'password_confirmation'); as error) {
+          <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="savingPassword()"
+        class="rounded-full bg-gold-500 px-6 py-2.5 text-sm font-semibold text-hg-black transition hover:bg-gold-400 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {{ savingPassword() ? 'Guardando...' : 'Cambiar contraseña' }}
+      </button>
+    </form>
+  </div>
+</section>
