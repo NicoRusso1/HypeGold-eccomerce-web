@@ -1,0 +1,1 @@
+# Ver .gitignore raíz del monorepo (ya cubre node_modules, dist, .angular, etc.)
