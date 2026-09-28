@@ -14,8 +14,11 @@
     <nav class="hidden items-center gap-6 text-sm font-medium text-hg-charcoal sm:flex">
       <a routerLink="/" class="transition hover:text-gold-600">Inicio</a>
       <a routerLink="/catalogo" class="transition hover:text-gold-600">Catálogo</a>
-      <a routerLink="/catalogo/anillos" class="transition hover:text-gold-600">Anillos</a>
-      <a routerLink="/catalogo/cadenas" class="transition hover:text-gold-600">Cadenas</a>
+      @for (categoria of categories(); track categoria.id) {
+        <a [routerLink]="['/catalogo', categoria.slug]" class="transition hover:text-gold-600">
+          {{ categoria.name }}
+        </a>
+      }
     </nav>
 
     <div class="flex items-center gap-3">

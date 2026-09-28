@@ -1,6 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { CategoryService } from '../../core/services/category.service';
+import { Category } from '../../core/models/category.model';
 
 @Component({
   imports: [RouterLink],
@@ -10,7 +12,18 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class Header {
   private readonly router = inject(Router);
+  private readonly categoryService = inject(CategoryService);
   protected readonly authService = inject(AuthService);
+
+  protected readonly categories = signal<Category[]>([]);
+
+  constructor() {
+    this.categoryService.getCategories().subscribe({
+      next: (categories) => this.categories.set(categories),
+      // Si falla, el menú simplemente queda sin categorías (no rompe la página).
+      error: () => this.categories.set([]),
+    });
+  }
 
   protected logout(): void {
     this.authService.logout().subscribe(() => this.router.navigateByUrl('/'));
