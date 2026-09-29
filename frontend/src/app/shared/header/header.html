@@ -11,7 +11,7 @@
       </span>
     </a>
 
-    <nav class="hidden items-center gap-6 text-sm font-medium text-hg-charcoal sm:flex">
+    <nav class="hidden items-center gap-6 text-sm font-medium text-hg-charcoal lg:flex">
       <a routerLink="/" class="transition hover:text-gold-600">Inicio</a>
       <a routerLink="/catalogo" class="transition hover:text-gold-600">Catálogo</a>
       @for (categoria of categories(); track categoria.id) {
@@ -20,6 +20,10 @@
         </a>
       }
     </nav>
+
+    <div class="hidden sm:block">
+      <app-search-box [categories]="categories()" />
+    </div>
 
     <div class="flex items-center gap-3">
       <a
@@ -60,5 +64,9 @@
         </a>
       }
     </div>
+  </div>
+
+  <div class="border-t border-gold-200/60 px-4 py-2 sm:hidden">
+    <app-search-box [categories]="categories()" />
   </div>
 </header>

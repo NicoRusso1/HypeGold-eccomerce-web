@@ -7,6 +7,7 @@ use App\Http\Requests\Api\Catalog\ProductIndexRequest;
 use App\Http\Resources\ProductDetailResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
 class ProductController extends Controller
@@ -98,6 +99,61 @@ class ProductController extends Controller
         };
 
         $products = $query->paginate($filters['per_page'] ?? 12)->withQueryString();
+
+        return ProductResource::collection($products);
+    }
+
+    /**
+     * Sugerencias de búsqueda para el autocompletado: resultados parciales
+     * y livianos (sin paginar) a medida que el cliente escribe.
+     */
+    #[OA\Get(
+        path: '/products/search',
+        summary: 'Sugerencias de búsqueda',
+        tags: ['Catálogo'],
+        parameters: [
+            new OA\Parameter(name: 'q', in: 'query', required: true, schema: new OA\Schema(type: 'string')),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Hasta 8 productos que coinciden con la búsqueda',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                    new OA\Property(property: 'name', type: 'string', example: 'Cadena cubana'),
+                                    new OA\Property(property: 'slug', type: 'string', example: 'cadena-cubana'),
+                                    new OA\Property(property: 'base_price', type: 'number', example: 45000),
+                                    new OA\Property(property: 'image', type: 'string', nullable: true),
+                                ],
+                                type: 'object',
+                            ),
+                        ),
+                    ],
+                    type: 'object',
+                ),
+            ),
+            new OA\Response(response: 422, description: 'Falta el parámetro q'),
+        ],
+    )]
+    public function search(Request $request)
+    {
+        $validated = $request->validate([
+            'q' => ['required', 'string', 'min:1', 'max:100'],
+        ]);
+
+        $products = Product::query()
+            ->where('active', true)
+            ->where('name', 'like', '%'.$validated['q'].'%')
+            ->with(['category', 'images', 'variants'])
+            ->orderBy('name')
+            ->limit(8)
+            ->get();
 
         return ProductResource::collection($products);
     }

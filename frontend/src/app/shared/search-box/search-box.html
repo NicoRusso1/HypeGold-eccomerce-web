@@ -1,0 +1,73 @@
+<div class="relative w-full max-w-xs">
+  <form (ngSubmit)="onSubmit()" class="relative">
+    <input
+      type="search"
+      [value]="query()"
+      (input)="onInput($any($event.target).value)"
+      (focus)="onFocus()"
+      placeholder="Buscar joyas..."
+      aria-label="Buscar productos"
+      class="w-full rounded-full border border-gold-200 bg-white px-4 py-2 pr-9 text-sm focus:border-gold-400 focus:outline-none"
+    />
+    <button type="submit" aria-label="Buscar" class="absolute right-2 top-1/2 -translate-y-1/2 text-hg-charcoal/60 hover:text-gold-600">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.2-5.2m0 0a7.5 7.5 0 1 0-10.6-10.6 7.5 7.5 0 0 0 10.6 10.6Z" />
+      </svg>
+    </button>
+  </form>
+
+  @if (open() && query().trim().length >= 2) {
+    <div class="absolute left-0 right-0 top-full z-50 mt-2 max-h-96 overflow-y-auto rounded-2xl border border-gold-200/60 bg-white p-2 shadow-lg">
+      @if (loading()) {
+        <p class="px-3 py-4 text-center text-sm text-hg-charcoal/60">Buscando...</p>
+      } @else if (suggestions().length > 0) {
+        @for (producto of suggestions(); track producto.id) {
+          <a
+            [routerLink]="['/producto', producto.slug]"
+            (click)="cerrarAlNavegar()"
+            class="flex items-center gap-3 rounded-xl p-2 transition hover:bg-gold-50"
+          >
+            <div class="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gold-50">
+              @if (producto.image) {
+                <img [src]="producto.image" [alt]="producto.name" class="h-full w-full object-cover" />
+              } @else {
+                <div class="flex h-full w-full items-center justify-center text-xl">💍</div>
+              }
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-sm font-medium text-hg-charcoal">{{ producto.name }}</p>
+              <p class="text-sm font-semibold text-gold-600">
+                {{ producto.base_price | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+              </p>
+            </div>
+          </a>
+        }
+        <button
+          type="button"
+          (click)="verTodosLosResultados()"
+          class="mt-1 w-full rounded-xl px-3 py-2 text-center text-sm font-medium text-gold-600 hover:bg-gold-50"
+        >
+          Ver todos los resultados →
+        </button>
+      } @else if (searched()) {
+        <div class="px-3 py-4 text-center">
+          <p class="text-sm text-hg-charcoal/70">No encontramos productos para "{{ query() }}".</p>
+          @if (categories.length > 0) {
+            <p class="mt-3 text-xs font-medium uppercase tracking-wide text-hg-charcoal/50">Probá con una categoría</p>
+            <div class="mt-2 flex flex-wrap justify-center gap-2">
+              @for (categoria of categories; track categoria.id) {
+                <a
+                  [routerLink]="['/catalogo', categoria.slug]"
+                  (click)="cerrarAlNavegar()"
+                  class="rounded-full border border-gold-200 px-3 py-1 text-xs font-medium text-hg-charcoal hover:border-gold-400 hover:text-gold-600"
+                >
+                  {{ categoria.name }}
+                </a>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

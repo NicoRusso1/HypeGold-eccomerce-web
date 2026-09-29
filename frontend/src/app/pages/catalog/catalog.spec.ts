@@ -19,7 +19,10 @@ describe('Catalog', () => {
         provideRouter([]),
         {
           provide: ActivatedRoute,
-          useValue: { paramMap: of(convertToParamMap({ categoria: 'cadenas' })) },
+          useValue: {
+            paramMap: of(convertToParamMap({ categoria: 'cadenas' })),
+            snapshot: { queryParamMap: convertToParamMap({}) },
+          },
         },
       ],
     }).compileComponents();
