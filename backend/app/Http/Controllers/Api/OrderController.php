@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Order\CheckoutRequest;
 use App\Http\Resources\OrderResource;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
@@ -35,8 +36,9 @@ class OrderController extends Controller
     {
         $user = $request->user();
         $address = $user->addresses()->findOrFail($request->validated('address_id'));
+        $couponCode = $request->validated('coupon_code');
 
-        $order = DB::transaction(function () use ($user, $address) {
+        $order = DB::transaction(function () use ($user, $address, $couponCode) {
             $cart = $user->cart()->with('items')->first();
 
             if (! $cart || $cart->items->isEmpty()) {
@@ -64,18 +66,23 @@ class OrderController extends Controller
                 }
             }
 
-            $total = $cart->items->sum(function ($item) use ($variants) {
+            $subtotal = $cart->items->sum(function ($item) use ($variants) {
                 $variant = $variants->get($item->product_variant_id);
                 $precio = (float) $variant->product->base_price + (float) $variant->extra_price;
 
                 return $precio * $item->quantity;
             });
 
+            [$coupon, $discount] = $this->aplicarCupon($couponCode, $subtotal);
+
             $order = Order::create([
                 'user_id' => $user->id,
                 'address_id' => $address->id,
                 'status' => 'pendiente',
-                'total' => $total,
+                'total' => round($subtotal - $discount, 2),
+                'coupon_id' => $coupon?->id,
+                'coupon_code' => $coupon?->code,
+                'discount' => $discount,
                 'shipping_label' => $address->label,
                 'shipping_street' => $address->street,
                 'shipping_city' => $address->city,
@@ -83,6 +90,8 @@ class OrderController extends Controller
                 'shipping_postal_code' => $address->postal_code,
                 'shipping_phone' => $address->phone,
             ]);
+
+            $coupon?->increment('times_used');
 
             foreach ($cart->items as $item) {
                 $variant = $variants->get($item->product_variant_id);
@@ -107,5 +116,33 @@ class OrderController extends Controller
         });
 
         return (new OrderResource($order->load('items')))->response()->setStatusCode(201);
+    }
+
+    /**
+     * Valida el cupón (si se mandó uno) y calcula el descuento sobre el
+     * subtotal, dentro de la misma transacción para que el conteo de usos
+     * quede consistente ante compras simultáneas.
+     *
+     * @return array{0: ?Coupon, 1: float}
+     */
+    private function aplicarCupon(?string $couponCode, float $subtotal): array
+    {
+        if (! $couponCode) {
+            return [null, 0.0];
+        }
+
+        $coupon = Coupon::whereRaw('UPPER(code) = ?', [strtoupper($couponCode)])
+            ->lockForUpdate()
+            ->first();
+
+        if (! $coupon) {
+            throw ValidationException::withMessages(['coupon' => ['No encontramos ese cupón.']]);
+        }
+
+        if (! $coupon->isValid()) {
+            throw ValidationException::withMessages(['coupon' => [$coupon->invalidReason()]]);
+        }
+
+        return [$coupon, $coupon->calculateDiscount($subtotal)];
     }
 }

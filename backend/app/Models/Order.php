@@ -14,6 +14,9 @@ class Order extends Model
         'address_id',
         'status',
         'total',
+        'coupon_id',
+        'coupon_code',
+        'discount',
         'shipping_label',
         'shipping_street',
         'shipping_city',
@@ -27,6 +30,7 @@ class Order extends Model
         return [
             'status' => OrderStatus::class,
             'total' => 'decimal:2',
+            'discount' => 'decimal:2',
         ];
     }
 
@@ -38,6 +42,11 @@ class Order extends Model
     public function address(): BelongsTo
     {
         return $this->belongsTo(Address::class);
+    }
+
+    public function coupon(): BelongsTo
+    {
+        return $this->belongsTo(Coupon::class);
     }
 
     public function items(): HasMany

@@ -2,22 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Order } from '../models/order.model';
-
-interface OrderResponse {
-  data: Order;
-}
+import { CouponValidation } from '../models/order.model';
 
 @Injectable({ providedIn: 'root' })
-export class OrderService {
+export class CouponService {
   private readonly http = inject(HttpClient);
 
-  checkout(addressId: number, couponCode?: string | null): Observable<Order> {
+  validate(code: string): Observable<CouponValidation> {
     return this.http
-      .post<OrderResponse>(`${environment.apiUrl}/orders`, {
-        address_id: addressId,
-        coupon_code: couponCode || undefined,
-      })
+      .post<{ data: CouponValidation }>(`${environment.apiUrl}/coupons/validate`, { code })
       .pipe(map((response) => response.data));
   }
 }

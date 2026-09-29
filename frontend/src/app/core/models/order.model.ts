@@ -12,6 +12,8 @@ export interface Order {
   id: number;
   status: string;
   total: number;
+  discount: number;
+  coupon_code: string | null;
   created_at: string;
   shipping: {
     label: string | null;
@@ -22,4 +24,13 @@ export interface Order {
     phone: string;
   };
   items: OrderItem[];
+}
+
+export interface CouponValidation {
+  code: string;
+  type: 'percentage' | 'fixed';
+  value: number;
+  subtotal: number;
+  discount: number;
+  total: number;
 }

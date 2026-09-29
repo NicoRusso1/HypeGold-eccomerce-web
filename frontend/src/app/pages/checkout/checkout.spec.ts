@@ -117,4 +117,65 @@ describe('CheckoutPage', () => {
     expect(component['error']()).toBe('No hay stock suficiente de Cadena cubana.');
     expect(component['order']()).toBeNull();
   });
+
+  it('aplica un cupon y recalcula el total mostrado', () => {
+    flushInitialRequests();
+
+    component['cuponInput'].set('diez');
+    component['aplicarCupon']();
+
+    const req = httpMock.expectOne((r) => r.url.endsWith('/coupons/validate') && r.method === 'POST');
+    expect(req.request.body).toEqual({ code: 'diez' });
+    req.flush({
+      data: { code: 'DIEZ', type: 'percentage', value: 10, subtotal: 90000, discount: 9000, total: 81000 },
+    });
+
+    expect(component['cuponAplicado']()?.total).toBe(81000);
+  });
+
+  it('muestra un error si el cupon no es valido', () => {
+    flushInitialRequests();
+
+    component['cuponInput'].set('vencido');
+    component['aplicarCupon']();
+
+    const req = httpMock.expectOne((r) => r.url.endsWith('/coupons/validate') && r.method === 'POST');
+    req.flush({ errors: { code: ['Este cupón venció.'] } }, { status: 422, statusText: 'Unprocessable Entity' });
+
+    expect(component['errorCupon']()).toBe('Este cupón venció.');
+    expect(component['cuponAplicado']()).toBeNull();
+  });
+
+  it('envia el codigo del cupon aplicado al confirmar la compra', () => {
+    flushInitialRequests();
+
+    component['cuponInput'].set('diez');
+    component['aplicarCupon']();
+    httpMock.expectOne((r) => r.url.endsWith('/coupons/validate')).flush({
+      data: { code: 'DIEZ', type: 'percentage', value: 10, subtotal: 90000, discount: 9000, total: 81000 },
+    });
+
+    component['confirmarCompra']();
+
+    const postReq = httpMock.expectOne((r) => r.url.endsWith('/orders') && r.method === 'POST');
+    expect(postReq.request.body).toEqual({ address_id: 5, coupon_code: 'DIEZ' });
+    postReq.flush({
+      data: {
+        id: 101,
+        status: 'pendiente',
+        total: 81000,
+        discount: 9000,
+        coupon_code: 'DIEZ',
+        created_at: '2026-09-29T00:00:00Z',
+        shipping: direccion,
+        items: [],
+      },
+    });
+
+    httpMock
+      .expectOne((r) => r.url.endsWith('/cart') && r.method === 'GET')
+      .flush({ data: { id: 1, items: [], items_count: 0, total: 0 } });
+
+    expect(component['order']()?.coupon_code).toBe('DIEZ');
+  });
 });
