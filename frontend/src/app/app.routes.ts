@@ -8,6 +8,7 @@ import { Profile } from './pages/profile/profile';
 import { Catalog } from './pages/catalog/catalog';
 import { ProductDetailPage } from './pages/product-detail/product-detail';
 import { CartPage } from './pages/cart/cart';
+import { AddressesPage } from './pages/addresses/addresses';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -21,4 +22,10 @@ export const routes: Routes = [
   { path: 'cuenta/olvide-contrasena', component: ForgotPassword, title: 'Recuperar contraseña · HypeGold' },
   { path: 'cuenta/restablecer-contrasena', component: ResetPassword, title: 'Restablecer contraseña · HypeGold' },
   { path: 'cuenta/perfil', component: Profile, title: 'Mi perfil · HypeGold', canActivate: [authGuard] },
+  {
+    path: 'cuenta/direcciones',
+    component: AddressesPage,
+    title: 'Mis direcciones · HypeGold',
+    canActivate: [authGuard],
+  },
 ];

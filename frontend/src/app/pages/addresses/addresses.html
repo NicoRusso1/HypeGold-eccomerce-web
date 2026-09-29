@@ -1,0 +1,159 @@
+<section class="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="font-display text-3xl font-semibold text-hg-black">Mis direcciones</h1>
+      <p class="mt-1 text-sm text-hg-charcoal/70">Guardá tus direcciones para usarlas al comprar.</p>
+    </div>
+    @if (!showForm()) {
+      <button
+        type="button"
+        (click)="nuevaDireccion()"
+        class="rounded-full bg-gold-500 px-5 py-2 text-sm font-semibold text-hg-black transition hover:bg-gold-400"
+      >
+        + Nueva
+      </button>
+    }
+  </div>
+
+  @if (showForm()) {
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="mt-8 space-y-4 rounded-2xl border border-gold-200/60 bg-white p-8 shadow-sm">
+      <h2 class="font-display text-lg font-semibold text-hg-black">
+        {{ editingId() ? 'Editar dirección' : 'Nueva dirección' }}
+      </h2>
+
+      <div>
+        <label for="label" class="block text-sm font-medium text-hg-charcoal">Nombre (opcional)</label>
+        <input
+          id="label"
+          type="text"
+          formControlName="label"
+          placeholder="Casa, trabajo..."
+          class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+        />
+      </div>
+
+      <div>
+        <label for="street" class="block text-sm font-medium text-hg-charcoal">Calle y número</label>
+        <input
+          id="street"
+          type="text"
+          formControlName="street"
+          class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+        />
+        @if (fieldError('street'); as error) {
+          <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="city" class="block text-sm font-medium text-hg-charcoal">Localidad</label>
+          <input
+            id="city"
+            type="text"
+            formControlName="city"
+            class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+          />
+          @if (fieldError('city'); as error) {
+            <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+          }
+        </div>
+
+        <div>
+          <label for="province" class="block text-sm font-medium text-hg-charcoal">Provincia</label>
+          <input
+            id="province"
+            type="text"
+            formControlName="province"
+            class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+          />
+          @if (fieldError('province'); as error) {
+            <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="postal_code" class="block text-sm font-medium text-hg-charcoal">Código postal</label>
+          <input
+            id="postal_code"
+            type="text"
+            formControlName="postal_code"
+            class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+          />
+          @if (fieldError('postal_code'); as error) {
+            <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+          }
+        </div>
+
+        <div>
+          <label for="phone" class="block text-sm font-medium text-hg-charcoal">Teléfono</label>
+          <input
+            id="phone"
+            type="tel"
+            formControlName="phone"
+            class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-500"
+          />
+          @if (fieldError('phone'); as error) {
+            <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+          }
+        </div>
+      </div>
+
+      <label class="flex items-center gap-2 text-sm text-hg-charcoal">
+        <input type="checkbox" formControlName="is_default" class="h-4 w-4 rounded border-gold-300 text-gold-500" />
+        Usar como dirección predeterminada
+      </label>
+
+      <div class="flex gap-3">
+        <button
+          type="submit"
+          [disabled]="saving()"
+          class="rounded-full bg-gold-500 px-6 py-2.5 text-sm font-semibold text-hg-black transition hover:bg-gold-400 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {{ saving() ? 'Guardando...' : 'Guardar dirección' }}
+        </button>
+        <button
+          type="button"
+          (click)="cancelar()"
+          class="rounded-full border border-gold-300 px-6 py-2.5 text-sm font-medium text-hg-charcoal transition hover:border-gold-500"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+  }
+
+  @if (loading()) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Cargando direcciones...</p>
+  } @else if (addresses().length === 0 && !showForm()) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Todavía no guardaste ninguna dirección.</p>
+  } @else if (addresses().length > 0) {
+    <div class="mt-8 space-y-3">
+      @for (address of addresses(); track address.id) {
+        <div class="flex items-start justify-between rounded-2xl border border-gold-200/60 bg-white p-5">
+          <div>
+            <div class="flex items-center gap-2">
+              <p class="font-medium text-hg-charcoal">{{ address.label || 'Dirección' }}</p>
+              @if (address.is_default) {
+                <span class="rounded-full bg-gold-100 px-2 py-0.5 text-xs font-medium text-gold-700">Predeterminada</span>
+              }
+            </div>
+            <p class="mt-1 text-sm text-hg-charcoal/70">{{ address.street }}</p>
+            <p class="text-sm text-hg-charcoal/70">{{ address.city }}, {{ address.province }} ({{ address.postal_code }})</p>
+            <p class="text-sm text-hg-charcoal/70">{{ address.phone }}</p>
+          </div>
+          <div class="flex shrink-0 gap-3">
+            <button type="button" (click)="editarDireccion(address)" class="text-sm font-medium text-gold-600 hover:text-gold-700">
+              Editar
+            </button>
+            <button type="button" (click)="eliminar(address)" class="text-sm font-medium text-red-500 hover:text-red-600">
+              Eliminar
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>
