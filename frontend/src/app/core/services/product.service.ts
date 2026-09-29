@@ -1,8 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { PaginatedResponse, Product, ProductFilters } from '../models/product.model';
+import { PaginatedResponse, Product, ProductDetail, ProductFilters } from '../models/product.model';
+
+interface ProductDetailResponse {
+  data: ProductDetail;
+}
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
@@ -18,5 +22,11 @@ export class ProductService {
     }
 
     return this.http.get<PaginatedResponse<Product>>(`${environment.apiUrl}/products`, { params });
+  }
+
+  getProduct(slug: string): Observable<ProductDetail> {
+    return this.http
+      .get<ProductDetailResponse>(`${environment.apiUrl}/products/${slug}`)
+      .pipe(map((response) => response.data));
   }
 }

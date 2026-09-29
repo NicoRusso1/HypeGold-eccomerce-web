@@ -6,17 +6,19 @@ import { ForgotPassword } from './pages/auth/forgot-password/forgot-password';
 import { ResetPassword } from './pages/auth/reset-password/reset-password';
 import { Profile } from './pages/profile/profile';
 import { Catalog } from './pages/catalog/catalog';
+import { ProductDetailPage } from './pages/product-detail/product-detail';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: Home, title: 'HypeGold Joyas' },
   { path: 'catalogo', component: Catalog, title: 'Catálogo · HypeGold' },
   { path: 'catalogo/:categoria', component: Catalog, title: 'Catálogo · HypeGold' },
+  { path: 'producto/:slug', component: ProductDetailPage, title: 'HypeGold' },
   { path: 'cuenta/registro', component: Register, title: 'Crear cuenta · HypeGold' },
   { path: 'cuenta/ingresar', component: Login, title: 'Ingresar · HypeGold' },
   { path: 'cuenta/olvide-contrasena', component: ForgotPassword, title: 'Recuperar contraseña · HypeGold' },
   { path: 'cuenta/restablecer-contrasena', component: ResetPassword, title: 'Restablecer contraseña · HypeGold' },
   { path: 'cuenta/perfil', component: Profile, title: 'Mi perfil · HypeGold', canActivate: [authGuard] },
-  // El resto de las rutas (producto, carrito) se agregan en sus historias
-  // correspondientes (HG-20, HG-23, etc.).
+  // El resto de las rutas (carrito, etc.) se agregan en sus historias
+  // correspondientes (HG-23, etc.).
 ];

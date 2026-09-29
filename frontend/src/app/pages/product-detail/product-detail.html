@@ -1,0 +1,110 @@
+@if (loading()) {
+  <p class="mx-auto max-w-6xl px-4 py-16 text-center text-hg-charcoal/60 sm:px-6">Cargando producto...</p>
+} @else if (notFound() || !product()) {
+  <div class="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6">
+    <p class="text-hg-charcoal/60">No encontramos este producto.</p>
+    <a routerLink="/catalogo" class="mt-4 inline-block text-sm font-medium text-gold-600 hover:text-gold-700">
+      Volver al catálogo
+    </a>
+  </div>
+} @else {
+  @let p = product()!;
+
+  <section class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <a routerLink="/catalogo" class="text-sm font-medium text-gold-600 hover:text-gold-700">← Volver al catálogo</a>
+
+    <div class="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-2">
+      <!-- Galería de imágenes -->
+      <div>
+        <div class="aspect-square overflow-hidden rounded-2xl border border-gold-200/60 bg-gold-50">
+          @if (p.images.length > 0) {
+            <img
+              [src]="p.images[activeImageIndex()].url"
+              [alt]="p.name"
+              class="h-full w-full object-cover"
+            />
+          } @else {
+            <div class="flex h-full w-full items-center justify-center text-6xl">💍</div>
+          }
+        </div>
+
+        @if (p.images.length > 1) {
+          <div class="mt-4 flex gap-3">
+            @for (image of p.images; track image.id; let i = $index) {
+              <button
+                type="button"
+                (click)="seleccionarImagen(i)"
+                class="h-16 w-16 overflow-hidden rounded-lg border transition"
+                [class.border-gold-500]="activeImageIndex() === i"
+                [class.border-gold-200]="activeImageIndex() !== i"
+              >
+                <img [src]="image.url" [alt]="p.name" class="h-full w-full object-cover" />
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Información del producto -->
+      <div>
+        @if (p.category) {
+          <p class="text-sm font-medium uppercase tracking-wide text-gold-600">{{ p.category.name }}</p>
+        }
+        <h1 class="mt-1 font-display text-3xl font-semibold text-hg-black">{{ p.name }}</h1>
+        <p class="mt-2 text-hg-charcoal/70">{{ p.material }}</p>
+
+        <p class="mt-4 font-display text-2xl font-semibold text-gold-600">
+          {{ (selectedVariant()?.price ?? p.base_price) | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+        </p>
+
+        @if (p.description) {
+          <p class="mt-4 text-hg-charcoal/80">{{ p.description }}</p>
+        }
+
+        @if (p.variants.length > 0) {
+          <div class="mt-6">
+            <p class="text-sm font-medium text-hg-charcoal">Elegí una opción</p>
+            <div class="mt-2 flex flex-wrap gap-2">
+              @for (variant of p.variants; track variant.id) {
+                <button
+                  type="button"
+                  [disabled]="variant.stock === 0"
+                  (click)="seleccionarVariante(variant.id)"
+                  class="rounded-full border px-4 py-1.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40"
+                  [class.border-gold-500]="selectedVariantId() === variant.id"
+                  [class.text-gold-600]="selectedVariantId() === variant.id"
+                  [class.border-gold-200]="selectedVariantId() !== variant.id"
+                  [class.text-hg-charcoal]="selectedVariantId() !== variant.id"
+                >
+                  {{ variant.talle ?? 'Único' }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="mt-4">
+          @if (selectedVariant(); as variant) {
+            @if (variant.stock === 0) {
+              <p class="text-sm font-medium text-red-500">Sin stock disponible</p>
+            } @else if (variant.stock <= 3) {
+              <p class="text-sm font-medium text-amber-600">¡Últimas {{ variant.stock }} unidades!</p>
+            } @else {
+              <p class="text-sm text-hg-charcoal/60">Stock disponible: {{ variant.stock }}</p>
+            }
+          } @else if (p.total_stock === 0) {
+            <p class="text-sm font-medium text-red-500">Sin stock disponible</p>
+          }
+        </div>
+
+        <button
+          type="button"
+          [disabled]="(selectedVariant()?.stock ?? p.total_stock) === 0"
+          class="mt-6 w-full rounded-full bg-gold-500 px-8 py-3 text-sm font-semibold text-hg-black transition hover:bg-gold-400 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
+        >
+          Agregar al carrito
+        </button>
+      </div>
+    </div>
+  </section>
+}

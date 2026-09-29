@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Catalog\ProductIndexRequest;
+use App\Http\Resources\ProductDetailResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use OpenApi\Attributes as OA;
@@ -99,5 +100,54 @@ class ProductController extends Controller
         $products = $query->paginate($filters['per_page'] ?? 12)->withQueryString();
 
         return ProductResource::collection($products);
+    }
+
+    /**
+     * Muestra el detalle de un producto activo: descripción, imágenes y variantes con stock.
+     */
+    #[OA\Get(
+        path: '/products/{slug}',
+        summary: 'Ver el detalle de un producto',
+        tags: ['Catálogo'],
+        parameters: [
+            new OA\Parameter(name: 'slug', in: 'path', required: true, schema: new OA\Schema(type: 'string')),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Detalle del producto',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'data',
+                            properties: [
+                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                new OA\Property(property: 'name', type: 'string', example: 'Cadena cubana'),
+                                new OA\Property(property: 'slug', type: 'string', example: 'cadena-cubana'),
+                                new OA\Property(property: 'description', type: 'string', nullable: true),
+                                new OA\Property(property: 'material', type: 'string', example: 'Oro laminado'),
+                                new OA\Property(property: 'base_price', type: 'number', example: 45000),
+                                new OA\Property(property: 'total_stock', type: 'integer', example: 22),
+                                new OA\Property(property: 'images', type: 'array', items: new OA\Items(type: 'object')),
+                                new OA\Property(property: 'variants', type: 'array', items: new OA\Items(type: 'object')),
+                            ],
+                            type: 'object',
+                        ),
+                    ],
+                    type: 'object',
+                ),
+            ),
+            new OA\Response(response: 404, description: 'Producto no encontrado'),
+        ],
+    )]
+    public function show(string $slug)
+    {
+        $product = Product::query()
+            ->where('slug', $slug)
+            ->where('active', true)
+            ->with(['category', 'variants', 'images'])
+            ->firstOrFail();
+
+        return new ProductDetailResource($product);
     }
 }
