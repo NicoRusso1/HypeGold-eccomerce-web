@@ -1,4 +1,7 @@
-<article class="group overflow-hidden rounded-2xl border border-gold-200/60 bg-white transition hover:shadow-lg">
+<a
+  [routerLink]="['/producto', product.slug]"
+  class="group block overflow-hidden rounded-2xl border border-gold-200/60 bg-white transition hover:shadow-lg"
+>
   <div class="aspect-square overflow-hidden bg-gold-50">
     @if (product.image) {
       <img
@@ -24,4 +27,4 @@
       <p class="mt-1 text-xs font-medium text-red-500">Sin stock</p>
     }
   </div>
-</article>
+</a>

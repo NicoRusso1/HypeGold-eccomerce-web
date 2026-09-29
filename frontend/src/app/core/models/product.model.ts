@@ -12,6 +12,33 @@ export interface Product {
   category: Category | null;
 }
 
+export interface ProductImage {
+  id: number;
+  url: string;
+  order: number;
+}
+
+export interface ProductVariant {
+  id: number;
+  talle: string | null;
+  sku: string;
+  stock: number;
+  price: number;
+}
+
+export interface ProductDetail {
+  id: number;
+  name: string;
+  slug: string;
+  description: string | null;
+  material: string;
+  base_price: number;
+  total_stock: number;
+  category: Category | null;
+  images: ProductImage[];
+  variants: ProductVariant[];
+}
+
 export type ProductSort = 'recientes' | 'precio_asc' | 'precio_desc' | 'nombre';
 
 export interface ProductFilters {

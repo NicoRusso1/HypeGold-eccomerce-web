@@ -1,9 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { convertToParamMap } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
 import { Catalog } from './catalog';
 
 describe('Catalog', () => {
@@ -17,6 +16,7 @@ describe('Catalog', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideRouter([]),
         {
           provide: ActivatedRoute,
           useValue: { paramMap: of(convertToParamMap({ categoria: 'cadenas' })) },
