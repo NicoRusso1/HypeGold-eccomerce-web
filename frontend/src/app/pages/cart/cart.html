@@ -1,0 +1,99 @@
+<section class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+  <h1 class="font-display text-3xl font-semibold text-hg-black">Mi carrito</h1>
+
+  @if (loading()) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Cargando carrito...</p>
+  } @else if (!cartService.cart() || cartService.cart()!.items.length === 0) {
+    <div class="mt-10 text-center">
+      <p class="text-hg-charcoal/60">Tu carrito está vacío.</p>
+      <a routerLink="/catalogo" class="mt-4 inline-block text-sm font-medium text-gold-600 hover:text-gold-700">
+        Ir al catálogo
+      </a>
+    </div>
+  } @else {
+    @let cart = cartService.cart()!;
+
+    <div class="mt-8 divide-y divide-gold-200/60 rounded-2xl border border-gold-200/60 bg-white">
+      @for (item of cart.items; track item.id) {
+        <div class="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
+          <a [routerLink]="['/producto', item.product.slug]" class="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gold-50">
+            @if (item.product.image) {
+              <img [src]="item.product.image" [alt]="item.product.name" class="h-full w-full object-cover" />
+            } @else {
+              <div class="flex h-full w-full items-center justify-center text-3xl">💍</div>
+            }
+          </a>
+
+          <div class="flex-1">
+            <a [routerLink]="['/producto', item.product.slug]" class="font-medium text-hg-charcoal hover:text-gold-600">
+              {{ item.product.name }}
+            </a>
+            @if (item.variant.talle) {
+              <p class="text-sm text-hg-charcoal/60">Talle: {{ item.variant.talle }}</p>
+            }
+            <p class="text-sm text-hg-charcoal/60">
+              {{ item.unit_price | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }} c/u
+            </p>
+            @if (errorPorItem()[item.id]) {
+              <p class="mt-1 text-xs font-medium text-red-500">{{ errorPorItem()[item.id] }}</p>
+            }
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              [disabled]="updatingItemId() === item.id"
+              (click)="cambiarCantidad(item.id, item.quantity - 1)"
+              class="h-8 w-8 rounded-full border border-gold-300 text-hg-charcoal transition hover:border-gold-500 disabled:opacity-40"
+            >
+              −
+            </button>
+            <span class="w-6 text-center text-sm font-medium">{{ item.quantity }}</span>
+            <button
+              type="button"
+              [disabled]="updatingItemId() === item.id || item.quantity >= item.variant.stock"
+              (click)="cambiarCantidad(item.id, item.quantity + 1)"
+              class="h-8 w-8 rounded-full border border-gold-300 text-hg-charcoal transition hover:border-gold-500 disabled:opacity-40"
+            >
+              +
+            </button>
+          </div>
+
+          <p class="w-24 text-right font-medium text-hg-charcoal">
+            {{ item.subtotal | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+          </p>
+
+          <button
+            type="button"
+            [disabled]="updatingItemId() === item.id"
+            (click)="eliminarItem(item.id)"
+            class="text-sm font-medium text-red-500 transition hover:text-red-600 disabled:opacity-40"
+          >
+            Quitar
+          </button>
+        </div>
+      }
+    </div>
+
+    <div class="mt-6 flex flex-col items-end gap-2">
+      <p class="font-display text-2xl font-semibold text-hg-black">
+        Total: {{ cart.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+      </p>
+      <div class="flex gap-3">
+        <button
+          type="button"
+          (click)="vaciarCarrito()"
+          class="rounded-full border border-gold-300 px-6 py-2 text-sm font-medium text-hg-charcoal transition hover:border-gold-500"
+        >
+          Vaciar carrito
+        </button>
+        <a
+          routerLink="/catalogo"
+          class="rounded-full bg-gold-500 px-6 py-2 text-sm font-semibold text-hg-black transition hover:bg-gold-400"
+        >
+          Seguir comprando
+        </a>
+      </div>
+    </div>
+  }
+</section>

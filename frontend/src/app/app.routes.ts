@@ -7,6 +7,7 @@ import { ResetPassword } from './pages/auth/reset-password/reset-password';
 import { Profile } from './pages/profile/profile';
 import { Catalog } from './pages/catalog/catalog';
 import { ProductDetailPage } from './pages/product-detail/product-detail';
+import { CartPage } from './pages/cart/cart';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -14,11 +15,10 @@ export const routes: Routes = [
   { path: 'catalogo', component: Catalog, title: 'Catálogo · HypeGold' },
   { path: 'catalogo/:categoria', component: Catalog, title: 'Catálogo · HypeGold' },
   { path: 'producto/:slug', component: ProductDetailPage, title: 'HypeGold' },
+  { path: 'carrito', component: CartPage, title: 'Mi carrito · HypeGold', canActivate: [authGuard] },
   { path: 'cuenta/registro', component: Register, title: 'Crear cuenta · HypeGold' },
   { path: 'cuenta/ingresar', component: Login, title: 'Ingresar · HypeGold' },
   { path: 'cuenta/olvide-contrasena', component: ForgotPassword, title: 'Recuperar contraseña · HypeGold' },
   { path: 'cuenta/restablecer-contrasena', component: ResetPassword, title: 'Restablecer contraseña · HypeGold' },
   { path: 'cuenta/perfil', component: Profile, title: 'Mi perfil · HypeGold', canActivate: [authGuard] },
-  // El resto de las rutas (carrito, etc.) se agregan en sus historias
-  // correspondientes (HG-23, etc.).
 ];
