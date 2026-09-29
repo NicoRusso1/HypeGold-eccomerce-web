@@ -10,6 +10,7 @@ import { ProductDetailPage } from './pages/product-detail/product-detail';
 import { CartPage } from './pages/cart/cart';
 import { AddressesPage } from './pages/addresses/addresses';
 import { CheckoutPage } from './pages/checkout/checkout';
+import { FavoritesPage } from './pages/favorites/favorites';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -19,6 +20,7 @@ export const routes: Routes = [
   { path: 'producto/:slug', component: ProductDetailPage, title: 'HypeGold' },
   { path: 'carrito', component: CartPage, title: 'Mi carrito · HypeGold', canActivate: [authGuard] },
   { path: 'checkout', component: CheckoutPage, title: 'Finalizar compra · HypeGold', canActivate: [authGuard] },
+  { path: 'favoritos', component: FavoritesPage, title: 'Mis favoritos · HypeGold', canActivate: [authGuard] },
   { path: 'cuenta/registro', component: Register, title: 'Crear cuenta · HypeGold' },
   { path: 'cuenta/ingresar', component: Login, title: 'Ingresar · HypeGold' },
   { path: 'cuenta/olvide-contrasena', component: ForgotPassword, title: 'Recuperar contraseña · HypeGold' },

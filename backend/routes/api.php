@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProfileController;
@@ -39,4 +40,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/addresses/{address}', [AddressController::class, 'destroy']);
 
     Route::post('/orders', [OrderController::class, 'store']);
+
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+    Route::post('/favorites', [FavoriteController::class, 'store']);
+    Route::delete('/favorites/{product}', [FavoriteController::class, 'destroy']);
 });

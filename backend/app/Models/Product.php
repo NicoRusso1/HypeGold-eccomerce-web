@@ -45,6 +45,11 @@ class Product extends Model
         return $this->hasMany(ProductImage::class)->orderBy('order');
     }
 
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
     /**
      * Stock total sumando todas las variantes del producto.
      */

@@ -54,6 +54,7 @@ describe('ProductDetailPage', () => {
 
   afterEach(() => {
     httpMock.verify();
+    localStorage.clear();
   });
 
   it('should create and load the product by slug', () => {
@@ -110,10 +111,11 @@ describe('ProductDetailPage', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    // El CartService dispara una carga inicial del carrito al detectar la sesion.
+    // El CartService y el FavoriteService disparan una carga inicial al detectar la sesion.
     httpMock.expectOne((r) => r.url.endsWith('/cart') && r.method === 'GET').flush({
       data: { id: 1, items: [], items_count: 0, total: 0 },
     });
+    httpMock.expectOne((r) => r.url.endsWith('/favorites') && r.method === 'GET').flush({ data: [] });
 
     component['agregarAlCarrito']();
 
@@ -122,5 +124,27 @@ describe('ProductDetailPage', () => {
     req.flush({ data: { id: 1, items: [], items_count: 1, total: 45000 } });
 
     expect(component['agregadoOk']()).toBe(true);
+  });
+
+  it('agrega el producto a favoritos cuando hay sesion iniciada', async () => {
+    httpMock.expectOne((r) => r.url.endsWith('/products/cadena-cubana')).flush(productDetailResponse);
+
+    const authService = TestBed.inject(AuthService);
+    authService.updateStoredUser({ id: 1, name: 'Nico', email: 'nico@hypegold.com', phone: null, role: 'cliente' });
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    httpMock.expectOne((r) => r.url.endsWith('/cart') && r.method === 'GET').flush({
+      data: { id: 1, items: [], items_count: 0, total: 0 },
+    });
+    httpMock.expectOne((r) => r.url.endsWith('/favorites') && r.method === 'GET').flush({ data: [] });
+
+    component['toggleFavorito']();
+
+    const req = httpMock.expectOne((r) => r.url.endsWith('/favorites') && r.method === 'POST');
+    expect(req.request.body).toEqual({ product_id: 1 });
+    req.flush({ message: 'ok' });
+
+    expect(component['favoriteService'].isFavorite(1)).toBe(true);
   });
 });

@@ -1,0 +1,28 @@
+<section class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <h1 class="font-display text-3xl font-semibold text-hg-black">Mis favoritos</h1>
+    <a
+      routerLink="/carrito"
+      class="rounded-full border border-gold-300 px-5 py-2 text-sm font-medium text-hg-charcoal transition hover:border-gold-500"
+    >
+      Ir al carrito →
+    </a>
+  </div>
+
+  @if (loading()) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Cargando favoritos...</p>
+  } @else if (favoriteService.favorites().length === 0) {
+    <div class="mt-10 text-center">
+      <p class="text-hg-charcoal/60">Todavía no guardaste ningún producto como favorito.</p>
+      <a routerLink="/catalogo" class="mt-4 inline-block text-sm font-medium text-gold-600 hover:text-gold-700">
+        Ir al catálogo
+      </a>
+    </div>
+  } @else {
+    <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (product of favoriteService.favorites(); track product.id) {
+        <app-product-card [product]="product" />
+      }
+    </div>
+  }
+</section>
