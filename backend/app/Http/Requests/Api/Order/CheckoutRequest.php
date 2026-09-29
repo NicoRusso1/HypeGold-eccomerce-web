@@ -23,6 +23,7 @@ class CheckoutRequest extends FormRequest
                 'integer',
                 Rule::exists('addresses', 'id')->where('user_id', $this->user()->id),
             ],
+            'coupon_code' => ['nullable', 'string', 'max:50'],
         ];
     }
 }
