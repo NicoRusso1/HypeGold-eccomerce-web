@@ -1,0 +1,70 @@
+<section class="mx-auto max-w-2xl px-4 py-10 sm:px-6">
+  <a routerLink="/cuenta/pedidos" class="text-sm font-medium text-gold-600 hover:text-gold-700">← Mis pedidos</a>
+
+  @if (loading()) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Cargando pedido...</p>
+  } @else if (notFound() || !order()) {
+    <div class="mt-10 text-center">
+      <p class="text-hg-charcoal/60">No encontramos ese pedido.</p>
+    </div>
+  } @else {
+    @let pedido = order()!;
+
+    <div class="mt-4 flex items-center justify-between">
+      <h1 class="font-display text-3xl font-semibold text-hg-black">Pedido #{{ pedido.id }}</h1>
+      <span
+        class="rounded-full px-3 py-1 text-sm font-medium"
+        [class.bg-red-50]="pedido.status === 'cancelado'"
+        [class.text-red-600]="pedido.status === 'cancelado'"
+        [class.bg-gold-50]="pedido.status !== 'cancelado'"
+        [class.text-gold-700]="pedido.status !== 'cancelado'"
+      >
+        {{ ordenStatusLabel(pedido.status) }}
+      </span>
+    </div>
+    <p class="mt-1 text-sm text-hg-charcoal/60">{{ pedido.created_at | date: 'dd/MM/yyyy HH:mm' }}</p>
+
+    <!-- Línea de tiempo -->
+    <div class="mt-8 rounded-2xl border border-gold-200/60 bg-white p-6">
+      <app-order-timeline [status]="pedido.status" />
+    </div>
+
+    <!-- Productos -->
+    <div class="mt-6 rounded-2xl border border-gold-200/60 bg-white p-6">
+      <h2 class="font-display text-lg font-semibold text-hg-black">Productos</h2>
+      <div class="mt-4 divide-y divide-gold-200/60">
+        @for (item of pedido.items; track item.id) {
+          <div class="flex items-center justify-between py-2 text-sm">
+            <span class="text-hg-charcoal">
+              {{ item.quantity }} × {{ item.product_name }}
+              @if (item.variant_talle) {
+                ({{ item.variant_talle }})
+              }
+            </span>
+            <span class="font-medium text-hg-charcoal">
+              {{ item.subtotal | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+            </span>
+          </div>
+        }
+      </div>
+
+      @if (pedido.discount > 0) {
+        <div class="mt-4 flex items-center justify-between text-sm text-green-700">
+          <span>Descuento{{ pedido.coupon_code ? ' (' + pedido.coupon_code + ')' : '' }}</span>
+          <span>−{{ pedido.discount | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+        </div>
+      }
+      <p class="mt-2 text-right font-display text-xl font-semibold text-gold-600">
+        Total: {{ pedido.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+      </p>
+    </div>
+
+    <!-- Envío -->
+    <div class="mt-6 rounded-2xl border border-gold-200/60 bg-white p-6 text-sm text-hg-charcoal/70">
+      <p class="font-medium text-hg-charcoal">Enviado a:</p>
+      <p>{{ pedido.shipping.street }}</p>
+      <p>{{ pedido.shipping.city }}, {{ pedido.shipping.province }} ({{ pedido.shipping.postal_code }})</p>
+      <p>{{ pedido.shipping.phone }}</p>
+    </div>
+  }
+</section>

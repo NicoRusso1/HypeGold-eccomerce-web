@@ -44,9 +44,14 @@
       </div>
     </div>
 
-    <a routerLink="/catalogo" class="mt-8 inline-block text-sm font-medium text-gold-600 hover:text-gold-700">
-      Seguir comprando
-    </a>
+    <div class="mt-8 flex items-center justify-center gap-4">
+      <a [routerLink]="['/cuenta/pedidos', confirmado.id]" class="text-sm font-medium text-gold-600 hover:text-gold-700">
+        Ver mi pedido
+      </a>
+      <a routerLink="/catalogo" class="text-sm font-medium text-gold-600 hover:text-gold-700">
+        Seguir comprando
+      </a>
+    </div>
   </section>
 } @else {
   <!-- Formulario de checkout -->
