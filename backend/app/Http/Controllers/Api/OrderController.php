@@ -8,12 +8,54 @@ use App\Http\Resources\OrderResource;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\ProductVariant;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use OpenApi\Attributes as OA;
 
 class OrderController extends Controller
 {
+    /**
+     * Lista los pedidos del usuario autenticado (los más recientes primero).
+     */
+    #[OA\Get(
+        path: '/orders',
+        summary: 'Listar mis pedidos',
+        tags: ['Pedidos'],
+        security: [['sanctum' => []]],
+        responses: [new OA\Response(response: 200, description: 'Listado paginado de pedidos')],
+    )]
+    public function index(Request $request)
+    {
+        $orders = $request->user()->orders()
+            ->withCount('items')
+            ->latest()
+            ->paginate(10);
+
+        return OrderResource::collection($orders);
+    }
+
+    /**
+     * Muestra el detalle de un pedido del usuario autenticado, con sus items.
+     */
+    #[OA\Get(
+        path: '/orders/{order}',
+        summary: 'Ver el detalle de un pedido',
+        tags: ['Pedidos'],
+        security: [['sanctum' => []]],
+        parameters: [new OA\Parameter(name: 'order', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [
+            new OA\Response(response: 200, description: 'Detalle del pedido'),
+            new OA\Response(response: 404, description: 'Pedido no encontrado'),
+        ],
+    )]
+    public function show(Request $request, int $order)
+    {
+        $pedido = $request->user()->orders()->with('items')->findOrFail($order);
+
+        return new OrderResource($pedido);
+    }
+
     /**
      * Confirma la compra: crea el pedido a partir del carrito del usuario,
      * descuenta el stock y vacía el carrito, todo dentro de una transacción.

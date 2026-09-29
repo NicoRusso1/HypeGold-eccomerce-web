@@ -1,0 +1,34 @@
+@if (isCancelado()) {
+  <div class="flex items-center gap-2 rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+    <span class="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white">✕</span>
+    Este pedido fue cancelado
+  </div>
+} @else {
+  <ol class="flex items-center">
+    @for (step of steps; track step; let i = $index; let last = $last) {
+      <li class="flex items-center" [class.flex-1]="!last">
+        <div class="flex flex-col items-center gap-1">
+          <span
+            class="flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold"
+            [class.bg-gold-500]="i <= currentIndex()"
+            [class.text-hg-black]="i <= currentIndex()"
+            [class.bg-gold-100]="i > currentIndex()"
+            [class.text-hg-charcoal]="i > currentIndex()"
+          >
+            @if (i < currentIndex()) {
+              ✓
+            } @else {
+              {{ i + 1 }}
+            }
+          </span>
+          <span class="text-xs font-medium text-hg-charcoal" [class.opacity-50]="i > currentIndex()">
+            {{ labels[step] }}
+          </span>
+        </div>
+        @if (!last) {
+          <div class="mx-2 h-0.5 flex-1" [class.bg-gold-500]="i < currentIndex()" [class.bg-gold-100]="i >= currentIndex()"></div>
+        }
+      </li>
+    }
+  </ol>
+}

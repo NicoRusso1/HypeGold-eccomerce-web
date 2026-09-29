@@ -11,6 +11,8 @@ import { CartPage } from './pages/cart/cart';
 import { AddressesPage } from './pages/addresses/addresses';
 import { CheckoutPage } from './pages/checkout/checkout';
 import { FavoritesPage } from './pages/favorites/favorites';
+import { OrdersPage } from './pages/orders/orders';
+import { OrderDetailPage } from './pages/order-detail/order-detail';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -30,6 +32,13 @@ export const routes: Routes = [
     path: 'cuenta/direcciones',
     component: AddressesPage,
     title: 'Mis direcciones · HypeGold',
+    canActivate: [authGuard],
+  },
+  { path: 'cuenta/pedidos', component: OrdersPage, title: 'Mis pedidos · HypeGold', canActivate: [authGuard] },
+  {
+    path: 'cuenta/pedidos/:id',
+    component: OrderDetailPage,
+    title: 'Mi pedido · HypeGold',
     canActivate: [authGuard],
   },
 ];
