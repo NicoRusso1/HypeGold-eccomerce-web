@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
@@ -29,4 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/cart/items/{item}', [CartController::class, 'updateItem']);
     Route::delete('/cart/items/{item}', [CartController::class, 'removeItem']);
     Route::delete('/cart', [CartController::class, 'clear']);
+
+    Route::get('/addresses', [AddressController::class, 'index']);
+    Route::post('/addresses', [AddressController::class, 'store']);
+    Route::put('/addresses/{address}', [AddressController::class, 'update']);
+    Route::delete('/addresses/{address}', [AddressController::class, 'destroy']);
 });
