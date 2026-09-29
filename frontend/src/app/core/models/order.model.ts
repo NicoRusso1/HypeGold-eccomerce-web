@@ -23,7 +23,8 @@ export interface Order {
     postal_code: string;
     phone: string;
   };
-  items: OrderItem[];
+  items?: OrderItem[];
+  items_count?: number;
 }
 
 export interface CouponValidation {

@@ -19,6 +19,7 @@ class OrderResource extends JsonResource
             'discount' => (float) $this->discount,
             'coupon_code' => $this->coupon_code,
             'created_at' => $this->created_at?->toIso8601String(),
+            'items_count' => $this->whenCounted('items'),
             'shipping' => [
                 'label' => $this->shipping_label,
                 'street' => $this->shipping_street,
