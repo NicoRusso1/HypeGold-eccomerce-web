@@ -1,10 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
-import { ProductDetail, ProductVariant } from '../../core/models/product.model';
+import { Product, ProductDetail, ProductVariant } from '../../core/models/product.model';
 import { ProductService } from '../../core/services/product.service';
 import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
+import { FavoriteService } from '../../core/services/favorite.service';
 
 @Component({
   imports: [CurrencyPipe, RouterLink],
@@ -18,6 +19,7 @@ export class ProductDetailPage {
   private readonly productService = inject(ProductService);
   private readonly authService = inject(AuthService);
   private readonly cartService = inject(CartService);
+  protected readonly favoriteService = inject(FavoriteService);
 
   protected readonly product = signal<ProductDetail | null>(null);
   protected readonly loading = signal(true);
@@ -93,6 +95,33 @@ export class ProductDetailPage {
         );
       },
     });
+  }
+
+  protected toggleFavorito(): void {
+    const product = this.product();
+
+    if (!product) {
+      return;
+    }
+
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigateByUrl('/cuenta/ingresar');
+      return;
+    }
+
+    const productoParaFavorito: Product = {
+      id: product.id,
+      name: product.name,
+      slug: product.slug,
+      description: product.description,
+      material: product.material,
+      base_price: product.base_price,
+      total_stock: product.total_stock,
+      image: product.images[0]?.url ?? null,
+      category: product.category,
+    };
+
+    this.favoriteService.toggle(productoParaFavorito).subscribe();
   }
 
   private cargarProducto(slug: string): void {

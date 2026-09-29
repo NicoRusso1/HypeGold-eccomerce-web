@@ -35,6 +35,7 @@ describe('Profile', () => {
 
   afterEach(() => {
     httpMock.verify();
+    localStorage.clear();
   });
 
   it('should create and prefill the form with the current user', () => {
