@@ -99,11 +99,19 @@
 
         <button
           type="button"
-          [disabled]="(selectedVariant()?.stock ?? p.total_stock) === 0"
+          [disabled]="(selectedVariant()?.stock ?? p.total_stock) === 0 || agregando()"
+          (click)="agregarAlCarrito()"
           class="mt-6 w-full rounded-full bg-gold-500 px-8 py-3 text-sm font-semibold text-hg-black transition hover:bg-gold-400 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
         >
-          Agregar al carrito
+          {{ agregando() ? 'Agregando...' : 'Agregar al carrito' }}
         </button>
+
+        @if (agregadoOk()) {
+          <p class="mt-2 text-sm font-medium text-green-600">¡Agregado al carrito!</p>
+        }
+        @if (errorCarrito()) {
+          <p class="mt-2 text-sm font-medium text-red-500">{{ errorCarrito() }}</p>
+        }
       </div>
     </div>
   </section>

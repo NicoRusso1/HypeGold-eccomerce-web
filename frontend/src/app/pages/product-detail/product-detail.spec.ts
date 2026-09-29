@@ -1,8 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
+import { AuthService } from '../../core/services/auth.service';
 import { ProductDetailPage } from './product-detail';
 
 describe('ProductDetailPage', () => {
@@ -88,5 +89,38 @@ describe('ProductDetailPage', () => {
 
     expect(component['notFound']()).toBe(true);
     expect(component['loading']()).toBe(false);
+  });
+
+  it('redirige al login al agregar al carrito sin sesion iniciada', () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigateByUrl');
+
+    httpMock.expectOne((r) => r.url.endsWith('/products/cadena-cubana')).flush(productDetailResponse);
+
+    component['agregarAlCarrito']();
+
+    expect(navigateSpy).toHaveBeenCalledWith('/cuenta/ingresar');
+  });
+
+  it('agrega la variante seleccionada al carrito cuando hay sesion iniciada', async () => {
+    httpMock.expectOne((r) => r.url.endsWith('/products/cadena-cubana')).flush(productDetailResponse);
+
+    const authService = TestBed.inject(AuthService);
+    authService.updateStoredUser({ id: 1, name: 'Nico', email: 'nico@hypegold.com', phone: null, role: 'cliente' });
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // El CartService dispara una carga inicial del carrito al detectar la sesion.
+    httpMock.expectOne((r) => r.url.endsWith('/cart') && r.method === 'GET').flush({
+      data: { id: 1, items: [], items_count: 0, total: 0 },
+    });
+
+    component['agregarAlCarrito']();
+
+    const req = httpMock.expectOne((r) => r.url.endsWith('/cart/items') && r.method === 'POST');
+    expect(req.request.body).toEqual({ product_variant_id: 1, quantity: 1 });
+    req.flush({ data: { id: 1, items: [], items_count: 1, total: 45000 } });
+
+    expect(component['agregadoOk']()).toBe(true);
   });
 });
