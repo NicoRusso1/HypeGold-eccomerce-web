@@ -70,6 +70,11 @@ class User extends Authenticatable
         return $this->hasMany(Address::class);
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
     /**
      * Envía la notificación de recuperación de contraseña, con un enlace
      * que apunta al frontend en vez de a una ruta web de Laravel.
