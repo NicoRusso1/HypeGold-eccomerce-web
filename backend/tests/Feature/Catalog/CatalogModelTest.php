@@ -55,8 +55,8 @@ class CatalogModelTest extends TestCase
     {
         $this->seed(CatalogSeeder::class);
 
-        $this->assertSame(4, Category::count());
-        $this->assertGreaterThanOrEqual(8, Product::count());
+        $this->assertSame(2, Category::count());
+        $this->assertGreaterThanOrEqual(7, Product::count());
 
         $product = Product::with(['category', 'variants', 'images'])->first();
 

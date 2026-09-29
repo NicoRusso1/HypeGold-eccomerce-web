@@ -12,38 +12,12 @@ class CatalogSeeder extends Seeder
     /**
      * Categorías y productos de ejemplo para desarrollo y demo.
      *
-     * Cadenas y Pulseras usan fotos reales de HypeGold (public/images/catalog).
-     * Anillos y Aros todavía no tienen fotos reales: usan un placeholder
-     * hasta que se saquen fotos de esos productos.
+     * HypeGold vende cadenas y pulseras. Todas usan fotos reales de HypeGold
+     * (public/images/catalog).
      */
     public function run(): void
     {
         $categorias = [
-            'Anillos' => [
-                [
-                    'name' => 'Anillo clásico',
-                    'material' => 'Oro 18k',
-                    'base_price' => 85000,
-                    'description' => 'Anillo clásico de oro 18k, ideal para uso diario.',
-                    'imagen' => null,
-                    'variantes' => [
-                        ['talle' => '16', 'stock' => 5],
-                        ['talle' => '18', 'stock' => 8],
-                        ['talle' => '20', 'stock' => 3],
-                    ],
-                ],
-                [
-                    'name' => 'Anillo solitario',
-                    'material' => 'Plata 925',
-                    'base_price' => 32000,
-                    'description' => 'Anillo solitario en plata 925 con circonia.',
-                    'imagen' => null,
-                    'variantes' => [
-                        ['talle' => '16', 'stock' => 6],
-                        ['talle' => '18', 'stock' => 6],
-                    ],
-                ],
-            ],
             'Cadenas' => [
                 [
                     'name' => 'Cadena cubana',
@@ -84,28 +58,6 @@ class CatalogSeeder extends Seeder
                     'imagen' => 'cadena-dije-cruz.jpg',
                     'variantes' => [
                         ['talle' => 'Único', 'stock' => 11],
-                    ],
-                ],
-            ],
-            'Aros' => [
-                [
-                    'name' => 'Aros gota',
-                    'material' => 'Plata 925',
-                    'base_price' => 22000,
-                    'description' => 'Aros gota en plata 925, livianos y versátiles.',
-                    'imagen' => null,
-                    'variantes' => [
-                        ['talle' => 'Único', 'stock' => 20],
-                    ],
-                ],
-                [
-                    'name' => 'Aros argolla',
-                    'material' => 'Oro laminado',
-                    'base_price' => 18000,
-                    'description' => 'Argollas medianas de oro laminado.',
-                    'imagen' => null,
-                    'variantes' => [
-                        ['talle' => 'Único', 'stock' => 18],
                     ],
                 ],
             ],

@@ -1,0 +1,30 @@
+<a
+  [routerLink]="['/producto', product.slug]"
+  class="group block overflow-hidden rounded-2xl border border-gold-200/60 bg-white transition hover:shadow-lg"
+>
+  <div class="aspect-square overflow-hidden bg-gold-50">
+    @if (product.image) {
+      <img
+        [src]="product.image"
+        [alt]="product.name"
+        class="h-full w-full object-cover transition group-hover:scale-105"
+      />
+    } @else {
+      <div class="flex h-full w-full items-center justify-center text-5xl">💍</div>
+    }
+  </div>
+
+  <div class="p-4">
+    @if (product.category) {
+      <p class="text-xs font-medium uppercase tracking-wide text-gold-600">{{ product.category.name }}</p>
+    }
+    <h3 class="mt-1 font-medium text-hg-charcoal">{{ product.name }}</h3>
+    <p class="mt-1 text-sm text-hg-charcoal/60">{{ product.material }}</p>
+    <p class="mt-2 font-display text-lg font-semibold text-gold-600">
+      {{ product.base_price | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+    </p>
+    @if (product.total_stock === 0) {
+      <p class="mt-1 text-xs font-medium text-red-500">Sin stock</p>
+    }
+  </div>
+</a>
