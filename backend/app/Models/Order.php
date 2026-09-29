@@ -57,4 +57,19 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    /**
+     * Cambia el estado del pedido si la transición es válida.
+     * Devuelve false (sin guardar) si la transición no está permitida.
+     */
+    public function transicionarA(OrderStatus $nuevoEstado): bool
+    {
+        if (! $this->status->puedeTransicionarA($nuevoEstado)) {
+            return false;
+        }
+
+        $this->status = $nuevoEstado;
+
+        return $this->save();
+    }
 }
