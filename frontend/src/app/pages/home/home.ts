@@ -1,37 +1,44 @@
-import { CurrencyPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ProductCard } from '../../shared/product-card/product-card';
+import { Category } from '../../core/models/category.model';
+import { Product } from '../../core/models/product.model';
+import { CategoryService } from '../../core/services/category.service';
+import { ProductService } from '../../core/services/product.service';
 
-interface Categoria {
-  slug: string;
-  nombre: string;
-  icono: string;
-}
-
-interface ProductoDestacado {
-  slug: string;
-  nombre: string;
-  material: string;
-  precio: number;
-  emoji: string;
-}
+const ICONOS_POR_CATEGORIA: Record<string, string> = {
+  cadenas: '⛓️',
+  pulseras: '✨',
+  anillos: '💍',
+  aros: '💎',
+};
 
 @Component({
-  imports: [RouterLink, CurrencyPipe],
+  imports: [RouterLink, ProductCard],
   selector: 'app-home',
   styleUrl: './home.css',
   templateUrl: './home.html',
 })
 export class Home {
-  // Datos de ejemplo: se reemplazan por la API en HG-21.
-  protected readonly categorias: Categoria[] = [
-    { slug: 'cadenas', nombre: 'Cadenas', icono: '⛓️' },
-    { slug: 'pulseras', nombre: 'Pulseras', icono: '✨' },
-  ];
+  private readonly categoryService = inject(CategoryService);
+  private readonly productService = inject(ProductService);
 
-  protected readonly destacados: ProductoDestacado[] = [
-    { slug: 'cadena-cubana', nombre: 'Cadena cubana', material: 'Oro laminado', precio: 45000, emoji: '⛓️' },
-    { slug: 'pulsera-forcet', nombre: 'Pulsera forcet', material: 'Oro 18k', precio: 24000, emoji: '✨' },
-    { slug: 'cadena-con-dije-corona', nombre: 'Cadena con dije corona', material: 'Oro laminado', precio: 35000, emoji: '👑' },
-  ];
+  protected readonly categorias = signal<Category[]>([]);
+  protected readonly destacados = signal<Product[]>([]);
+
+  constructor() {
+    this.categoryService.getCategories().subscribe({
+      next: (categorias) => this.categorias.set(categorias),
+      error: () => this.categorias.set([]),
+    });
+
+    this.productService.getProducts({ sort: 'recientes', per_page: 3 }).subscribe({
+      next: (response) => this.destacados.set(response.data),
+      error: () => this.destacados.set([]),
+    });
+  }
+
+  protected iconoDe(categoria: Category): string {
+    return ICONOS_POR_CATEGORIA[categoria.slug] ?? '💫';
+  }
 }
