@@ -22,16 +22,20 @@
     </nav>
 
     <div class="flex items-center gap-3">
-      <button
-        type="button"
+      <a
+        routerLink="/carrito"
         aria-label="Ver carrito"
         class="relative rounded-full p-2 text-hg-charcoal transition hover:bg-gold-50 hover:text-gold-600"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-6 w-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 1.994-4.694 2.602-7.167.084-.342-.174-.667-.526-.667H5.106M7.5 14.25 5.106 5.106M7.5 14.25 5.25 21m11.25-6.75L18.75 21m-9.75 0h9.75" />
         </svg>
-        <span class="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold-500 px-1 text-[10px] font-semibold text-hg-ivory">0</span>
-      </button>
+        @if (cartService.itemsCount() > 0) {
+          <span class="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold-500 px-1 text-[10px] font-semibold text-hg-ivory">
+            {{ cartService.itemsCount() }}
+          </span>
+        }
+      </a>
 
       @if (authService.isLoggedIn()) {
         <a
