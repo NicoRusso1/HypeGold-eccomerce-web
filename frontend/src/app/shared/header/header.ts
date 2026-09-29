@@ -4,9 +4,10 @@ import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
 import { CategoryService } from '../../core/services/category.service';
 import { Category } from '../../core/models/category.model';
+import { SearchBox } from '../search-box/search-box';
 
 @Component({
-  imports: [RouterLink],
+  imports: [RouterLink, SearchBox],
   selector: 'app-header',
   styleUrl: './header.css',
   templateUrl: './header.html',
