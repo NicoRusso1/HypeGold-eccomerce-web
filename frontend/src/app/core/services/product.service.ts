@@ -29,4 +29,11 @@ export class ProductService {
       .get<ProductDetailResponse>(`${environment.apiUrl}/products/${slug}`)
       .pipe(map((response) => response.data));
   }
+
+  /** Sugerencias livianas para el autocompletado de búsqueda. */
+  searchSuggestions(q: string): Observable<Product[]> {
+    return this.http
+      .get<{ data: Product[] }>(`${environment.apiUrl}/products/search`, { params: { q } })
+      .pipe(map((response) => response.data));
+  }
 }

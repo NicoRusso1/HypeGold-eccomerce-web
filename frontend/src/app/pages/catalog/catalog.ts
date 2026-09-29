@@ -35,6 +35,12 @@ export class Catalog {
   });
 
   constructor() {
+    const searchInicial = this.route.snapshot.queryParamMap.get('search');
+
+    if (searchInicial) {
+      this.filterForm.patchValue({ search: searchInicial });
+    }
+
     this.route.paramMap.subscribe((params) => {
       this.categoriaSlug.set(params.get('categoria'));
       this.page = 1;
