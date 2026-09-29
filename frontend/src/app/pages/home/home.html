@@ -18,44 +18,37 @@
 </section>
 
 <!-- Categorías -->
-<section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-  <h2 class="font-display text-2xl font-semibold text-hg-black">Categorías</h2>
-  <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-    @for (categoria of categorias; track categoria.slug) {
-      <a
-        [routerLink]="['/catalogo', categoria.slug]"
-        class="group flex flex-col items-center gap-3 rounded-2xl border border-gold-200/60 bg-white p-6 text-center transition hover:border-gold-400 hover:shadow-lg"
-      >
-        <span class="text-3xl">{{ categoria.icono }}</span>
-        <span class="font-medium text-hg-charcoal group-hover:text-gold-600">{{ categoria.nombre }}</span>
-      </a>
-    }
-  </div>
-</section>
-
-<!-- Productos destacados -->
-<section class="bg-gold-50/60 py-16">
-  <div class="mx-auto max-w-6xl px-4 sm:px-6">
-    <div class="flex items-end justify-between">
-      <h2 class="font-display text-2xl font-semibold text-hg-black">Destacados</h2>
-      <a routerLink="/catalogo" class="text-sm font-medium text-gold-600 hover:text-gold-700">Ver todo →</a>
-    </div>
-
-    <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      @for (producto of destacados; track producto.slug) {
-        <article class="group overflow-hidden rounded-2xl border border-gold-200/60 bg-white transition hover:shadow-lg">
-          <div class="flex aspect-square items-center justify-center bg-gold-50 text-5xl">
-            {{ producto.emoji }}
-          </div>
-          <div class="p-4">
-            <h3 class="font-medium text-hg-charcoal">{{ producto.nombre }}</h3>
-            <p class="mt-1 text-sm text-hg-charcoal/60">{{ producto.material }}</p>
-            <p class="mt-2 font-display text-lg font-semibold text-gold-600">
-              {{ producto.precio | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
-            </p>
-          </div>
-        </article>
+@if (categorias().length > 0) {
+  <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <h2 class="font-display text-2xl font-semibold text-hg-black">Categorías</h2>
+    <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      @for (categoria of categorias(); track categoria.id) {
+        <a
+          [routerLink]="['/catalogo', categoria.slug]"
+          class="group flex flex-col items-center gap-3 rounded-2xl border border-gold-200/60 bg-white p-6 text-center transition hover:border-gold-400 hover:shadow-lg"
+        >
+          <span class="text-3xl">{{ iconoDe(categoria) }}</span>
+          <span class="font-medium text-hg-charcoal group-hover:text-gold-600">{{ categoria.name }}</span>
+        </a>
       }
     </div>
-  </div>
-</section>
+  </section>
+}
+
+<!-- Productos destacados -->
+@if (destacados().length > 0) {
+  <section class="bg-gold-50/60 py-16">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <div class="flex items-end justify-between">
+        <h2 class="font-display text-2xl font-semibold text-hg-black">Destacados</h2>
+        <a routerLink="/catalogo" class="text-sm font-medium text-gold-600 hover:text-gold-700">Ver todo →</a>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        @for (producto of destacados(); track producto.id) {
+          <app-product-card [product]="producto" />
+        }
+      </div>
+    </div>
+  </section>
+}
