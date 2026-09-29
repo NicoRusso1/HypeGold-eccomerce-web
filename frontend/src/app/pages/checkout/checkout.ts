@@ -3,9 +3,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Address } from '../../core/models/address.model';
-import { Order } from '../../core/models/order.model';
+import { CouponValidation, Order } from '../../core/models/order.model';
 import { AddressService } from '../../core/services/address.service';
 import { CartService } from '../../core/services/cart.service';
+import { CouponService } from '../../core/services/coupon.service';
 import { OrderService } from '../../core/services/order.service';
 
 @Component({
@@ -18,6 +19,7 @@ export class CheckoutPage {
   protected readonly cartService = inject(CartService);
   private readonly addressService = inject(AddressService);
   private readonly orderService = inject(OrderService);
+  private readonly couponService = inject(CouponService);
 
   protected readonly addresses = signal<Address[]>([]);
   protected readonly loading = signal(true);
@@ -25,6 +27,11 @@ export class CheckoutPage {
   protected readonly confirmando = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly order = signal<Order | null>(null);
+
+  protected readonly cuponInput = signal('');
+  protected readonly cuponAplicado = signal<CouponValidation | null>(null);
+  protected readonly validandoCupon = signal(false);
+  protected readonly errorCupon = signal<string | null>(null);
 
   constructor() {
     this.cartService.loadCart().subscribe();
@@ -44,6 +51,39 @@ export class CheckoutPage {
     this.selectedAddressId.set(id);
   }
 
+  protected aplicarCupon(): void {
+    const code = this.cuponInput().trim();
+
+    if (!code) {
+      return;
+    }
+
+    this.validandoCupon.set(true);
+    this.errorCupon.set(null);
+
+    this.couponService.validate(code).subscribe({
+      next: (validacion) => {
+        this.validandoCupon.set(false);
+        this.cuponAplicado.set(validacion);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.validandoCupon.set(false);
+        this.cuponAplicado.set(null);
+        this.errorCupon.set(
+          error.status === 422
+            ? (error.error?.errors?.code?.[0] ?? 'Ese cupón no es válido.')
+            : 'No pudimos validar el cupón. Probá de nuevo en un momento.',
+        );
+      },
+    });
+  }
+
+  protected quitarCupon(): void {
+    this.cuponAplicado.set(null);
+    this.cuponInput.set('');
+    this.errorCupon.set(null);
+  }
+
   protected confirmarCompra(): void {
     const addressId = this.selectedAddressId();
 
@@ -54,7 +94,7 @@ export class CheckoutPage {
     this.confirmando.set(true);
     this.error.set(null);
 
-    this.orderService.checkout(addressId).subscribe({
+    this.orderService.checkout(addressId, this.cuponAplicado()?.code).subscribe({
       next: (order) => {
         this.confirmando.set(false);
         this.order.set(order);

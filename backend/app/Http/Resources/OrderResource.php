@@ -16,6 +16,8 @@ class OrderResource extends JsonResource
             'id' => $this->id,
             'status' => $this->status->value,
             'total' => (float) $this->total,
+            'discount' => (float) $this->discount,
+            'coupon_code' => $this->coupon_code,
             'created_at' => $this->created_at?->toIso8601String(),
             'shipping' => [
                 'label' => $this->shipping_label,

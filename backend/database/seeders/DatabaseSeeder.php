@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminUserSeeder::class,
             CatalogSeeder::class,
+            CouponSeeder::class,
         ]);
 
         // Cliente de prueba para desarrollo local (password: "password").
