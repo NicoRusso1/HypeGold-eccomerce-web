@@ -24,6 +24,7 @@ describe('Header', () => {
 
   afterEach(() => {
     httpMock.verify();
+    localStorage.clear();
   });
 
   it('should create and load categories', () => {
