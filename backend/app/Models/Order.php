@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\OrderStatus;
+use App\Notifications\OrderStatusChangedNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,8 @@ class Order extends Model
         'coupon_id',
         'coupon_code',
         'discount',
+        'mp_preference_id',
+        'mp_payment_id',
         'shipping_label',
         'shipping_street',
         'shipping_city',
@@ -70,6 +73,12 @@ class Order extends Model
 
         $this->status = $nuevoEstado;
 
-        return $this->save();
+        if (! $this->save()) {
+            return false;
+        }
+
+        $this->user->notify(new OrderStatusChangedNotification($this));
+
+        return true;
     }
 }

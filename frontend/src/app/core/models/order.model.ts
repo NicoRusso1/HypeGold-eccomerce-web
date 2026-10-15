@@ -25,6 +25,8 @@ export interface Order {
   };
   items?: OrderItem[];
   items_count?: number;
+  /** Solo viene presente justo después del checkout; URL para pagar con Mercado Pago. */
+  payment_url?: string | null;
 }
 
 export interface CouponValidation {
