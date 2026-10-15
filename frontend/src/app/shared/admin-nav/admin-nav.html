@@ -1,5 +1,13 @@
 <nav class="mx-auto flex max-w-5xl gap-6 px-4 pt-8 text-sm font-medium text-hg-charcoal/70 sm:px-6">
   <a
+    routerLink="/admin/ventas"
+    routerLinkActive="text-gold-600 border-gold-500"
+    [routerLinkActiveOptions]="{ exact: false }"
+    class="border-b-2 border-transparent pb-2 transition hover:text-gold-600"
+  >
+    Ventas
+  </a>
+  <a
     routerLink="/admin/productos"
     routerLinkActive="text-gold-600 border-gold-500"
     [routerLinkActiveOptions]="{ exact: false }"

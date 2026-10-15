@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\AdminCategoryController;
+use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AdminOrderController;
 use App\Http\Controllers\Api\AdminProductController;
 use App\Http\Controllers\Api\AdminStockController;
@@ -82,5 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/orders', [AdminOrderController::class, 'index']);
         Route::get('/orders/{order}', [AdminOrderController::class, 'show']);
         Route::put('/orders/{order}/status', [AdminOrderController::class, 'updateStatus']);
+
+        Route::get('/dashboard', [AdminDashboardController::class, 'index']);
     });
 });

@@ -20,6 +20,7 @@ import { AdminCategoryListPage } from './pages/admin/category-list/admin-categor
 import { AdminStockListPage } from './pages/admin/stock-list/admin-stock-list';
 import { AdminOrderListPage } from './pages/admin/order-list/admin-order-list';
 import { AdminOrderDetailPage } from './pages/admin/order-detail/admin-order-detail';
+import { AdminDashboardPage } from './pages/admin/dashboard/admin-dashboard';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 
@@ -110,6 +111,12 @@ export const routes: Routes = [
     path: 'admin/pedidos/:id',
     component: AdminOrderDetailPage,
     title: 'Pedido · Admin HypeGold',
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/ventas',
+    component: AdminDashboardPage,
+    title: 'Ventas · Admin HypeGold',
     canActivate: [adminGuard],
   },
 ];
