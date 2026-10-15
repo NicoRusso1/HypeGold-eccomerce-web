@@ -18,6 +18,8 @@ class OrderResource extends JsonResource
             'total' => (float) $this->total,
             'discount' => (float) $this->discount,
             'coupon_code' => $this->coupon_code,
+            // Solo viene seteado justo después de crear el pedido (checkout); no persiste.
+            'payment_url' => $this->payment_url ?? null,
             'created_at' => $this->created_at?->toIso8601String(),
             'items_count' => $this->whenCounted('items'),
             'shipping' => [

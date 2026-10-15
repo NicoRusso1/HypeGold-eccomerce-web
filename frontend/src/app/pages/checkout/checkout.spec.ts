@@ -178,4 +178,34 @@ describe('CheckoutPage', () => {
 
     expect(component['order']()?.coupon_code).toBe('DIEZ');
   });
+
+  it('redirige a Mercado Pago cuando el pedido trae payment_url', () => {
+    flushInitialRequests();
+    const redirectSpy = vi.spyOn(component as any, 'redirigirAPago').mockImplementation(() => {});
+
+    component['confirmarCompra']();
+
+    const postReq = httpMock.expectOne((r) => r.url.endsWith('/orders') && r.method === 'POST');
+    postReq.flush({
+      data: {
+        id: 102,
+        status: 'pendiente',
+        total: 90000,
+        discount: 0,
+        coupon_code: null,
+        created_at: '2026-09-29T00:00:00Z',
+        shipping: direccion,
+        items: [],
+        payment_url: 'https://mp.example/pago/pref-102',
+      },
+    });
+
+    httpMock
+      .expectOne((r) => r.url.endsWith('/cart') && r.method === 'GET')
+      .flush({ data: { id: 1, items: [], items_count: 0, total: 0 } });
+
+    expect(redirectSpy).toHaveBeenCalledWith('https://mp.example/pago/pref-102');
+    // No muestra la pantalla de "pedido registrado" porque ya redirige a pagar.
+    expect(component['order']()).toBeNull();
+  });
 });

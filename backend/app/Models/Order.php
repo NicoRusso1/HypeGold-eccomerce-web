@@ -21,6 +21,8 @@ class Order extends Model
         'coupon_id',
         'coupon_code',
         'discount',
+        'mp_preference_id',
+        'mp_payment_id',
         'shipping_label',
         'shipping_street',
         'shipping_city',
