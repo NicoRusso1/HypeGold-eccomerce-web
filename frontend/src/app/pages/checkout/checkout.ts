@@ -96,16 +96,29 @@ export class CheckoutPage {
 
     this.orderService.checkout(addressId, this.cuponAplicado()?.code).subscribe({
       next: (order) => {
-        this.confirmando.set(false);
-        this.order.set(order);
         // El carrito ya se vació en el backend; se refresca el estado local.
         this.cartService.loadCart().subscribe();
+
+        if (order.payment_url) {
+          // Se redirige al checkout de Mercado Pago para completar el pago.
+          this.redirigirAPago(order.payment_url);
+          return;
+        }
+
+        // Si no se pudo generar el link de pago, igual mostramos el pedido
+        // creado (queda pendiente) en vez de dejar la pantalla colgada.
+        this.confirmando.set(false);
+        this.order.set(order);
       },
       error: (error: HttpErrorResponse) => {
         this.confirmando.set(false);
         this.error.set(this.mensajeError(error));
       },
     });
+  }
+
+  protected redirigirAPago(url: string): void {
+    window.location.href = url;
   }
 
   private mensajeError(error: HttpErrorResponse): string {

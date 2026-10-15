@@ -8,13 +8,17 @@ use App\Http\Resources\OrderResource;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\ProductVariant;
+use App\Services\MercadoPagoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use OpenApi\Attributes as OA;
 
 class OrderController extends Controller
 {
+    public function __construct(private readonly MercadoPagoService $mercadoPago) {}
+
     /**
      * Lista los pedidos del usuario autenticado (los más recientes primero).
      */
@@ -157,7 +161,28 @@ class OrderController extends Controller
             return $order;
         });
 
-        return (new OrderResource($order->load('items')))->response()->setStatusCode(201);
+        $order->load(['items', 'user']);
+
+        // La preferencia de Mercado Pago se crea fuera de la transacción: es una
+        // llamada de red y no debe mantener bloqueadas las filas de stock/cupón.
+        try {
+            $preferencia = $this->mercadoPago->crearPreferencia($order);
+            $order->update(['mp_preference_id' => $preferencia->id]);
+            $order->payment_url = $preferencia->init_point;
+        } catch (\MercadoPago\Exceptions\MPApiException $e) {
+            Log::error('No se pudo crear la preferencia de Mercado Pago', [
+                'order_id' => $order->id,
+                'status_code' => $e->getStatusCode(),
+                'response' => $e->getApiResponse()->getContent(),
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('No se pudo crear la preferencia de Mercado Pago', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        return (new OrderResource($order))->response()->setStatusCode(201);
     }
 
     /**
