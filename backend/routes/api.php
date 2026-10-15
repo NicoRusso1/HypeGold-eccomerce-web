@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AddressController;
+use App\Http\Controllers\Api\AdminProductController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
@@ -59,5 +60,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/coupons', [CouponController::class, 'store']);
         Route::put('/coupons/{coupon}', [CouponController::class, 'update']);
         Route::delete('/coupons/{coupon}', [CouponController::class, 'destroy']);
+
+        Route::get('/products', [AdminProductController::class, 'index']);
+        Route::post('/products', [AdminProductController::class, 'store']);
+        Route::get('/products/{product}', [AdminProductController::class, 'show']);
+        Route::put('/products/{product}', [AdminProductController::class, 'update']);
+        Route::post('/products/{product}/images', [AdminProductController::class, 'uploadImage']);
+        Route::delete('/products/{product}/images/{image}', [AdminProductController::class, 'deleteImage']);
     });
 });
