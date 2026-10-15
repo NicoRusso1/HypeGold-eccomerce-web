@@ -127,6 +127,13 @@
 
   @if (loading()) {
     <p class="mt-10 text-center text-hg-charcoal/60">Cargando direcciones...</p>
+  } @else if (error()) {
+    <div class="mt-10 text-center">
+      <p class="text-red-500">No pudimos cargar tus direcciones. Probá de nuevo en un momento.</p>
+      <button type="button" (click)="reintentar()" class="mt-4 text-sm font-medium text-gold-600 hover:text-gold-700">
+        Reintentar
+      </button>
+    </div>
   } @else if (addresses().length === 0 && !showForm()) {
     <p class="mt-10 text-center text-hg-charcoal/60">Todavía no guardaste ninguna dirección.</p>
   } @else if (addresses().length > 0) {

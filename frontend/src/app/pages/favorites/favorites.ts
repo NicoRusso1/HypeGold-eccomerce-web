@@ -13,11 +13,25 @@ export class FavoritesPage {
   protected readonly favoriteService = inject(FavoriteService);
 
   protected readonly loading = signal(true);
+  protected readonly error = signal(false);
 
   constructor() {
+    this.cargarFavoritos();
+  }
+
+  protected reintentar(): void {
+    this.error.set(false);
+    this.loading.set(true);
+    this.cargarFavoritos();
+  }
+
+  private cargarFavoritos(): void {
     this.favoriteService.loadFavorites().subscribe({
       next: () => this.loading.set(false),
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.error.set(true);
+      },
     });
   }
 }
