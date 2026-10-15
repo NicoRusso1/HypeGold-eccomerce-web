@@ -201,7 +201,7 @@ class ProductController extends Controller
         $product = Product::query()
             ->where('slug', $slug)
             ->where('active', true)
-            ->with(['category', 'variants', 'images'])
+            ->with(['category', 'variants', 'images', 'reviews'])
             ->firstOrFail();
 
         return new ProductDetailResource($product);

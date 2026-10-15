@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AdminCategoryController;
 use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AdminOrderController;
 use App\Http\Controllers\Api\AdminProductController;
+use App\Http\Controllers\Api\AdminReviewController;
 use App\Http\Controllers\Api\AdminStockController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
@@ -85,5 +86,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/orders/{order}/status', [AdminOrderController::class, 'updateStatus']);
 
         Route::get('/dashboard', [AdminDashboardController::class, 'index']);
+
+        Route::get('/reviews', [AdminReviewController::class, 'index']);
+        Route::post('/reviews', [AdminReviewController::class, 'store']);
+        Route::put('/reviews/{review}', [AdminReviewController::class, 'update']);
+        Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy']);
     });
 });

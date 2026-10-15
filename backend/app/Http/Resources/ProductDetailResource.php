@@ -29,6 +29,15 @@ class ProductDetailResource extends JsonResource
                 'stock' => $variant->stock,
                 'price' => (float) $this->base_price + (float) $variant->extra_price,
             ])),
+            'average_rating' => $this->whenLoaded('reviews', fn () => $this->reviews->isEmpty() ? null : round($this->reviews->avg('rating'), 1)),
+            'reviews_count' => $this->whenLoaded('reviews', fn () => $this->reviews->count()),
+            'reviews' => $this->whenLoaded('reviews', fn () => $this->reviews->map(fn ($review) => [
+                'id' => $review->id,
+                'author_name' => $review->author_name,
+                'rating' => $review->rating,
+                'comment' => $review->comment,
+                'created_at' => $review->created_at?->toIso8601String(),
+            ])),
         ];
     }
 }

@@ -26,6 +26,14 @@ export interface ProductVariant {
   price: number;
 }
 
+export interface ProductReview {
+  id: number;
+  author_name: string;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+}
+
 export interface ProductDetail {
   id: number;
   name: string;
@@ -37,6 +45,9 @@ export interface ProductDetail {
   category: Category | null;
   images: ProductImage[];
   variants: ProductVariant[];
+  average_rating: number | null;
+  reviews_count: number;
+  reviews: ProductReview[];
 }
 
 export type ProductSort = 'recientes' | 'precio_asc' | 'precio_desc' | 'nombre';
