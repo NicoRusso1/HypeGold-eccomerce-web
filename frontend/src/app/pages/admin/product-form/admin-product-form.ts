@@ -6,13 +6,14 @@ import { AdminProductImage } from '../../../core/models/admin-product.model';
 import { Category } from '../../../core/models/category.model';
 import { AdminProductService } from '../../../core/services/admin-product.service';
 import { CategoryService } from '../../../core/services/category.service';
+import { AdminNav } from '../../../shared/admin-nav/admin-nav';
 
 interface ValidationErrors {
   [field: string]: string[];
 }
 
 @Component({
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, AdminNav],
   selector: 'app-admin-product-form',
   styleUrl: './admin-product-form.css',
   templateUrl: './admin-product-form.html',

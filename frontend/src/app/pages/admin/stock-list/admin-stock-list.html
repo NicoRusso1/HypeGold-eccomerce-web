@@ -1,0 +1,73 @@
+<app-admin-nav />
+
+<section class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <h1 class="font-display text-3xl font-semibold text-hg-black">Stock</h1>
+
+    @if (meta(); as m) {
+      @if (m.low_stock_count > 0) {
+        <label class="flex items-center gap-2 rounded-full bg-amber-50 px-4 py-2 text-sm font-medium text-amber-800">
+          <input type="checkbox" [(ngModel)]="soloStockBajo" class="h-4 w-4 rounded border-amber-300 text-amber-600" />
+          ⚠️ {{ m.low_stock_count }} variante{{ m.low_stock_count === 1 ? '' : 's' }} con stock bajo (≤ {{ m.low_stock_threshold }})
+        </label>
+      }
+    }
+  </div>
+
+  @if (loading()) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Cargando stock...</p>
+  } @else if (itemsVisibles.length === 0) {
+    <p class="mt-10 text-center text-hg-charcoal/60">
+      {{ soloStockBajo() ? 'No hay variantes con stock bajo.' : 'Todavía no hay variantes cargadas.' }}
+    </p>
+  } @else {
+    <div class="mt-8 overflow-hidden rounded-2xl border border-gold-200/60 bg-white">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-gold-50 text-xs font-semibold uppercase tracking-wide text-hg-charcoal/70">
+          <tr>
+            <th class="px-4 py-3">Producto</th>
+            <th class="px-4 py-3">Talle</th>
+            <th class="px-4 py-3">SKU</th>
+            <th class="px-4 py-3">Stock</th>
+            <th class="px-4 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gold-200/60">
+          @for (item of itemsVisibles; track item.id) {
+            <tr [class.bg-amber-50]="item.low_stock">
+              <td class="px-4 py-3">
+                <p class="font-medium text-hg-charcoal">{{ item.product.name }}</p>
+                <p class="text-xs text-hg-charcoal/60">{{ item.product.category || '—' }}</p>
+              </td>
+              <td class="px-4 py-3 text-hg-charcoal/70">{{ item.talle || '—' }}</td>
+              <td class="px-4 py-3 text-hg-charcoal/70">{{ item.sku }}</td>
+              <td class="px-4 py-3">
+                <input
+                  type="number"
+                  min="0"
+                  [ngModel]="valorEditado(item)"
+                  (ngModelChange)="onCambioValor(item, $event)"
+                  class="w-20 rounded-lg border px-2 py-1 text-sm focus:outline-none"
+                  [class.border-amber-400]="item.low_stock"
+                  [class.border-gold-200]="!item.low_stock"
+                />
+              </td>
+              <td class="px-4 py-3 text-right">
+                @if (huboCambio(item)) {
+                  <button
+                    type="button"
+                    [disabled]="savingId() === item.id"
+                    (click)="guardar(item)"
+                    class="text-sm font-medium text-gold-600 hover:text-gold-700 disabled:opacity-50"
+                  >
+                    {{ savingId() === item.id ? 'Guardando...' : 'Guardar' }}
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

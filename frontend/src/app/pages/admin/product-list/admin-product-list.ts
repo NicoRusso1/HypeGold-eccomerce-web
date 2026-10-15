@@ -4,9 +4,10 @@ import { RouterLink } from '@angular/router';
 import { AdminProduct } from '../../../core/models/admin-product.model';
 import { PaginatedResponse } from '../../../core/models/product.model';
 import { AdminProductService } from '../../../core/services/admin-product.service';
+import { AdminNav } from '../../../shared/admin-nav/admin-nav';
 
 @Component({
-  imports: [CurrencyPipe, RouterLink],
+  imports: [CurrencyPipe, RouterLink, AdminNav],
   selector: 'app-admin-product-list',
   styleUrl: './admin-product-list.css',
   templateUrl: './admin-product-list.html',
