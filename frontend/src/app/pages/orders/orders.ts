@@ -17,6 +17,7 @@ export class OrdersPage {
 
   protected readonly orders = signal<Order[]>([]);
   protected readonly loading = signal(true);
+  protected readonly error = signal(false);
   protected readonly meta = signal<PaginatedResponse<Order>['meta'] | null>(null);
 
   protected readonly ordenStatusLabel = ordenStatusLabel;
@@ -34,6 +35,7 @@ export class OrdersPage {
 
   private cargarPedidos(): void {
     this.loading.set(true);
+    this.error.set(false);
 
     this.orderService.getOrders(this.page).subscribe({
       next: (response) => {
@@ -41,7 +43,10 @@ export class OrdersPage {
         this.meta.set(response.meta);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.error.set(true);
+      },
     });
   }
 }

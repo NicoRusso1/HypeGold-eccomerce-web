@@ -3,6 +3,13 @@
 
   @if (loading()) {
     <p class="mt-10 text-center text-hg-charcoal/60">Cargando carrito...</p>
+  } @else if (error()) {
+    <div class="mt-10 text-center">
+      <p class="text-red-500">No pudimos cargar tu carrito. Probá de nuevo en un momento.</p>
+      <button type="button" (click)="reintentar()" class="mt-4 text-sm font-medium text-gold-600 hover:text-gold-700">
+        Reintentar
+      </button>
+    </div>
   } @else if (!cartService.cart() || cartService.cart()!.items.length === 0) {
     <div class="mt-10 text-center">
       <p class="text-hg-charcoal/60">Tu carrito está vacío.</p>

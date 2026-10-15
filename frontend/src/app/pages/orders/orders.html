@@ -3,6 +3,13 @@
 
   @if (loading()) {
     <p class="mt-10 text-center text-hg-charcoal/60">Cargando pedidos...</p>
+  } @else if (error()) {
+    <div class="mt-10 text-center">
+      <p class="text-red-500">No pudimos cargar tus pedidos. Probá de nuevo en un momento.</p>
+      <button type="button" (click)="irAPagina(1)" class="mt-4 text-sm font-medium text-gold-600 hover:text-gold-700">
+        Reintentar
+      </button>
+    </div>
   } @else if (orders().length === 0) {
     <div class="mt-10 text-center">
       <p class="text-hg-charcoal/60">Todavía no hiciste ningún pedido.</p>
