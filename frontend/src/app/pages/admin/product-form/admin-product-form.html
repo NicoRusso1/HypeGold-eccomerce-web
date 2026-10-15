@@ -1,0 +1,197 @@
+<section class="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+  <a routerLink="/admin/productos" class="text-sm font-medium text-gold-600 hover:text-gold-700">← Productos</a>
+
+  <h1 class="mt-2 font-display text-3xl font-semibold text-hg-black">
+    {{ productId() ? 'Editar producto' : 'Nuevo producto' }}
+  </h1>
+
+  @if (loading()) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Cargando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="mt-8 space-y-6 rounded-2xl border border-gold-200/60 bg-white p-8">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="name" class="block text-sm font-medium text-hg-charcoal">Nombre</label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+          />
+          @if (errors()['name']) {
+            <p class="mt-1 text-xs text-red-600">{{ errors()['name'][0] }}</p>
+          }
+        </div>
+
+        <div>
+          <label for="category_id" class="block text-sm font-medium text-hg-charcoal">Categoría</label>
+          <select
+            id="category_id"
+            formControlName="category_id"
+            class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+          >
+            <option [ngValue]="null">Elegí una categoría</option>
+            @for (categoria of categories(); track categoria.id) {
+              <option [ngValue]="categoria.id">{{ categoria.name }}</option>
+            }
+          </select>
+          @if (errors()['category_id']) {
+            <p class="mt-1 text-xs text-red-600">{{ errors()['category_id'][0] }}</p>
+          }
+        </div>
+      </div>
+
+      <div>
+        <label for="description" class="block text-sm font-medium text-hg-charcoal">Descripción</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          rows="3"
+          class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+        ></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="material" class="block text-sm font-medium text-hg-charcoal">Material</label>
+          <input
+            id="material"
+            type="text"
+            formControlName="material"
+            placeholder="Oro laminado, Plata 925..."
+            class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+          />
+          @if (errors()['material']) {
+            <p class="mt-1 text-xs text-red-600">{{ errors()['material'][0] }}</p>
+          }
+        </div>
+
+        <div>
+          <label for="base_price" class="block text-sm font-medium text-hg-charcoal">Precio base</label>
+          <input
+            id="base_price"
+            type="number"
+            min="0"
+            formControlName="base_price"
+            class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+          />
+          @if (errors()['base_price']) {
+            <p class="mt-1 text-xs text-red-600">{{ errors()['base_price'][0] }}</p>
+          }
+        </div>
+      </div>
+
+      <label class="flex items-center gap-2 text-sm text-hg-charcoal">
+        <input type="checkbox" formControlName="active" class="h-4 w-4 rounded border-gold-300 text-gold-500" />
+        Producto activo (visible en la tienda)
+      </label>
+
+      <!-- Variantes -->
+      <div class="border-t border-gold-200/60 pt-6">
+        <div class="flex items-center justify-between">
+          <h2 class="font-display text-lg font-semibold text-hg-black">Variantes</h2>
+          <button
+            type="button"
+            (click)="agregarVariante()"
+            class="text-sm font-medium text-gold-600 hover:text-gold-700"
+          >
+            + Agregar variante
+          </button>
+        </div>
+
+        @if (errors()['variants']) {
+          <p class="mt-2 text-xs text-red-600">{{ errors()['variants'][0] }}</p>
+        }
+
+        <div formArrayName="variants" class="mt-4 space-y-3">
+          @for (variantGroup of variantsArray.controls; track $index; let i = $index) {
+            <div [formGroupName]="i" class="grid grid-cols-1 gap-3 rounded-lg border border-gold-200 p-4 sm:grid-cols-5">
+              <div>
+                <label class="block text-xs font-medium text-hg-charcoal">Talle</label>
+                <input
+                  type="text"
+                  formControlName="talle"
+                  placeholder="Único, 18, 50cm..."
+                  class="mt-1 w-full rounded-lg border border-gold-200 px-2 py-1.5 text-sm focus:border-gold-500 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-hg-charcoal">SKU</label>
+                <input
+                  type="text"
+                  formControlName="sku"
+                  class="mt-1 w-full rounded-lg border border-gold-200 px-2 py-1.5 text-sm focus:border-gold-500 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-hg-charcoal">Stock</label>
+                <input
+                  type="number"
+                  min="0"
+                  formControlName="stock"
+                  class="mt-1 w-full rounded-lg border border-gold-200 px-2 py-1.5 text-sm focus:border-gold-500 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-hg-charcoal">Extra $</label>
+                <input
+                  type="number"
+                  min="0"
+                  formControlName="extra_price"
+                  class="mt-1 w-full rounded-lg border border-gold-200 px-2 py-1.5 text-sm focus:border-gold-500 focus:outline-none"
+                />
+              </div>
+              <div class="flex items-end">
+                <button
+                  type="button"
+                  [disabled]="variantsArray.length <= 1"
+                  (click)="quitarVariante(i)"
+                  class="w-full rounded-lg border border-red-200 px-2 py-1.5 text-sm font-medium text-red-500 transition hover:border-red-400 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Quitar
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="saving()"
+        class="rounded-full bg-gold-500 px-6 py-2.5 text-sm font-semibold text-hg-black transition hover:bg-gold-400 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {{ saving() ? 'Guardando...' : 'Guardar producto' }}
+      </button>
+    </form>
+
+    <!-- Imágenes (solo si el producto ya existe) -->
+    @if (productId()) {
+      <div class="mt-6 rounded-2xl border border-gold-200/60 bg-white p-8">
+        <h2 class="font-display text-lg font-semibold text-hg-black">Fotos</h2>
+
+        <div class="mt-4 flex flex-wrap gap-4">
+          @for (image of images(); track image.id) {
+            <div class="group relative h-24 w-24 overflow-hidden rounded-lg border border-gold-200">
+              <img [src]="image.url" alt="" class="h-full w-full object-cover" />
+              <button
+                type="button"
+                (click)="eliminarImagen(image)"
+                class="absolute inset-0 flex items-center justify-center bg-black/50 text-xs font-medium text-white opacity-0 transition group-hover:opacity-100"
+              >
+                Eliminar
+              </button>
+            </div>
+          }
+        </div>
+
+        <label class="mt-4 inline-block cursor-pointer rounded-full border border-gold-300 px-5 py-2 text-sm font-medium text-hg-charcoal transition hover:border-gold-500">
+          {{ subiendoImagen() ? 'Subiendo...' : '+ Subir foto' }}
+          <input type="file" accept="image/*" class="hidden" [disabled]="subiendoImagen()" (change)="onImagenSeleccionada($event)" />
+        </label>
+      </div>
+    } @else {
+      <p class="mt-4 text-sm text-hg-charcoal/60">Guardá el producto primero para poder subirle fotos.</p>
+    }
+  }
+</section>

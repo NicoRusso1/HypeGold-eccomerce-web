@@ -14,7 +14,10 @@ import { FavoritesPage } from './pages/favorites/favorites';
 import { OrdersPage } from './pages/orders/orders';
 import { OrderDetailPage } from './pages/order-detail/order-detail';
 import { PaymentResultPage } from './pages/payment-result/payment-result';
+import { AdminProductListPage } from './pages/admin/product-list/admin-product-list';
+import { AdminProductFormPage } from './pages/admin/product-form/admin-product-form';
 import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', component: Home, title: 'HypeGold Joyas' },
@@ -62,5 +65,23 @@ export const routes: Routes = [
     title: 'Pago no procesado · HypeGold',
     data: { kind: 'failure' },
     canActivate: [authGuard],
+  },
+  {
+    path: 'admin/productos',
+    component: AdminProductListPage,
+    title: 'Productos · Admin HypeGold',
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/productos/nuevo',
+    component: AdminProductFormPage,
+    title: 'Nuevo producto · Admin HypeGold',
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/productos/:id/editar',
+    component: AdminProductFormPage,
+    title: 'Editar producto · Admin HypeGold',
+    canActivate: [adminGuard],
   },
 ];

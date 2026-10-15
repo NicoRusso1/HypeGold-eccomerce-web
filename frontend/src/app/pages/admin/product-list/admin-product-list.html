@@ -1,0 +1,80 @@
+<section class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+  <div class="flex items-center justify-between">
+    <h1 class="font-display text-3xl font-semibold text-hg-black">Productos</h1>
+    <a
+      routerLink="/admin/productos/nuevo"
+      class="rounded-full bg-gold-500 px-5 py-2 text-sm font-semibold text-hg-black transition hover:bg-gold-400"
+    >
+      + Nuevo producto
+    </a>
+  </div>
+
+  @if (loading()) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Cargando productos...</p>
+  } @else if (products().length === 0) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Todavía no hay productos cargados.</p>
+  } @else {
+    <div class="mt-8 overflow-hidden rounded-2xl border border-gold-200/60 bg-white">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-gold-50 text-xs font-semibold uppercase tracking-wide text-hg-charcoal/70">
+          <tr>
+            <th class="px-4 py-3">Producto</th>
+            <th class="px-4 py-3">Categoría</th>
+            <th class="px-4 py-3">Precio</th>
+            <th class="px-4 py-3">Estado</th>
+            <th class="px-4 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gold-200/60">
+          @for (product of products(); track product.id) {
+            <tr>
+              <td class="px-4 py-3 font-medium text-hg-charcoal">{{ product.name }}</td>
+              <td class="px-4 py-3 text-hg-charcoal/70">{{ product.category?.name || '—' }}</td>
+              <td class="px-4 py-3 text-hg-charcoal/70">
+                {{ product.base_price | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+              </td>
+              <td class="px-4 py-3">
+                <span
+                  class="rounded-full px-3 py-0.5 text-xs font-medium"
+                  [class.bg-green-50]="product.active"
+                  [class.text-green-700]="product.active"
+                  [class.bg-hg-charcoal/10]="!product.active"
+                  [class.text-hg-charcoal]="!product.active"
+                >
+                  {{ product.active ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <a [routerLink]="['/admin/productos', product.id, 'editar']" class="text-sm font-medium text-gold-600 hover:text-gold-700">
+                  Editar
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (meta() && meta()!.last_page > 1) {
+      <div class="mt-6 flex items-center justify-center gap-4">
+        <button
+          type="button"
+          [disabled]="meta()!.current_page <= 1"
+          (click)="irAPagina(meta()!.current_page - 1)"
+          class="rounded-full border border-gold-300 px-4 py-1.5 text-sm font-medium text-hg-charcoal transition hover:border-gold-500 disabled:opacity-40"
+        >
+          Anterior
+        </button>
+        <span class="text-sm text-hg-charcoal/70">Página {{ meta()!.current_page }} de {{ meta()!.last_page }}</span>
+        <button
+          type="button"
+          [disabled]="meta()!.current_page >= meta()!.last_page"
+          (click)="irAPagina(meta()!.current_page + 1)"
+          class="rounded-full border border-gold-300 px-4 py-1.5 text-sm font-medium text-hg-charcoal transition hover:border-gold-500 disabled:opacity-40"
+        >
+          Siguiente
+        </button>
+      </div>
+    }
+  }
+</section>
