@@ -36,3 +36,14 @@ body {
   outline: 2px solid var(--color-gold-500);
   outline-offset: 2px;
 }
+
+/* Al imprimir un comprobante (app-receipt), se oculta todo el chrome de la
+   página para que solo se imprima el comprobante en sí. */
+@media print {
+  app-header,
+  app-footer,
+  app-admin-nav,
+  .no-print {
+    display: none !important;
+  }
+}
