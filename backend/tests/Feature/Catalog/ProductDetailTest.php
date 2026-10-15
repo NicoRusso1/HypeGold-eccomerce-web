@@ -4,6 +4,7 @@ namespace Tests\Feature\Catalog;
 
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Review;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -55,5 +56,30 @@ class ProductDetailTest extends TestCase
         $product = Product::factory()->create(['slug' => 'sin-auth']);
 
         $this->getJson('/api/products/sin-auth')->assertOk();
+    }
+
+    public function test_incluye_el_promedio_y_la_cantidad_de_resenas(): void
+    {
+        $product = Product::factory()->create(['slug' => 'con-resenas']);
+        Review::factory()->create(['product_id' => $product->id, 'rating' => 5]);
+        Review::factory()->create(['product_id' => $product->id, 'rating' => 4]);
+
+        $response = $this->getJson('/api/products/con-resenas');
+
+        $response->assertOk()
+            ->assertJsonPath('data.average_rating', 4.5)
+            ->assertJsonPath('data.reviews_count', 2)
+            ->assertJsonCount(2, 'data.reviews');
+    }
+
+    public function test_un_producto_sin_resenas_no_tiene_promedio(): void
+    {
+        $product = Product::factory()->create(['slug' => 'sin-resenas']);
+
+        $response = $this->getJson('/api/products/sin-resenas');
+
+        $response->assertOk()
+            ->assertJsonPath('data.average_rating', null)
+            ->assertJsonPath('data.reviews_count', 0);
     }
 }

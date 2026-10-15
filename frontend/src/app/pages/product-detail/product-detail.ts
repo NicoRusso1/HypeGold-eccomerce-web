@@ -6,9 +6,10 @@ import { ProductService } from '../../core/services/product.service';
 import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
 import { FavoriteService } from '../../core/services/favorite.service';
+import { StarRating } from '../../shared/star-rating/star-rating';
 
 @Component({
-  imports: [CurrencyPipe, RouterLink],
+  imports: [CurrencyPipe, RouterLink, StarRating],
   selector: 'app-product-detail',
   styleUrl: './product-detail.css',
   templateUrl: './product-detail.html',

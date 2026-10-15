@@ -1,0 +1,137 @@
+<app-admin-nav />
+
+<section class="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <h1 class="font-display text-3xl font-semibold text-hg-black">Reseñas</h1>
+
+    <select
+      [ngModel]="filtroProductoId()"
+      (ngModelChange)="onCambioFiltro($event)"
+      [ngModelOptions]="{ standalone: true }"
+      class="rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+    >
+      <option [ngValue]="null">Todos los productos</option>
+      @for (producto of productos(); track producto.id) {
+        <option [ngValue]="producto.id">{{ producto.name }}</option>
+      }
+    </select>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="mt-8 space-y-4 rounded-2xl border border-gold-200/60 bg-white p-6">
+    <h2 class="font-display text-lg font-semibold text-hg-black">
+      {{ editingId() ? 'Editar reseña' : 'Nueva reseña' }}
+    </h2>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <label for="product_id" class="block text-sm font-medium text-hg-charcoal">Producto</label>
+        <select
+          id="product_id"
+          formControlName="product_id"
+          class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+        >
+          <option [ngValue]="null">Elegí un producto</option>
+          @for (producto of productos(); track producto.id) {
+            <option [ngValue]="producto.id">{{ producto.name }}</option>
+          }
+        </select>
+        @if (errors()['product_id']) {
+          <p class="mt-1 text-xs text-red-600">{{ errors()['product_id'][0] }}</p>
+        }
+      </div>
+
+      <div>
+        <label for="author_name" class="block text-sm font-medium text-hg-charcoal">Nombre del cliente</label>
+        <input
+          id="author_name"
+          type="text"
+          formControlName="author_name"
+          placeholder="Marcela G."
+          class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+        />
+        @if (errors()['author_name']) {
+          <p class="mt-1 text-xs text-red-600">{{ errors()['author_name'][0] }}</p>
+        }
+      </div>
+    </div>
+
+    <div>
+      <label for="rating" class="block text-sm font-medium text-hg-charcoal">Calificación</label>
+      <select
+        id="rating"
+        formControlName="rating"
+        class="mt-1 w-full max-w-[160px] rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+      >
+        <option [ngValue]="5">5 estrellas</option>
+        <option [ngValue]="4">4 estrellas</option>
+        <option [ngValue]="3">3 estrellas</option>
+        <option [ngValue]="2">2 estrellas</option>
+        <option [ngValue]="1">1 estrella</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="comment" class="block text-sm font-medium text-hg-charcoal">Comentario (opcional)</label>
+      <textarea
+        id="comment"
+        formControlName="comment"
+        rows="3"
+        class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+      ></textarea>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button
+        type="submit"
+        [disabled]="saving()"
+        class="rounded-full bg-gold-500 px-6 py-2.5 text-sm font-semibold text-hg-black transition hover:bg-gold-400 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {{ saving() ? 'Guardando...' : editingId() ? 'Guardar cambios' : 'Crear reseña' }}
+      </button>
+      @if (editingId()) {
+        <button
+          type="button"
+          (click)="cancelarEdicion()"
+          class="text-sm font-medium text-hg-charcoal/70 hover:text-hg-charcoal"
+        >
+          Cancelar
+        </button>
+      }
+    </div>
+  </form>
+
+  @if (loading()) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Cargando reseñas...</p>
+  } @else if (error()) {
+    <p class="mt-10 text-center text-red-500">No pudimos cargar las reseñas. Probá de nuevo en un momento.</p>
+  } @else if (reviews().length === 0) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Todavía no hay reseñas cargadas.</p>
+  } @else {
+    <div class="mt-8 space-y-3">
+      @for (review of reviews(); track review.id) {
+        <div class="rounded-2xl border border-gold-200/60 bg-white p-5">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-xs font-medium uppercase tracking-wide text-gold-600">{{ review.product.name }}</p>
+              <div class="mt-1 flex items-center gap-2">
+                <app-star-rating [rating]="review.rating" />
+                <span class="text-sm font-medium text-hg-charcoal">{{ review.author_name }}</span>
+              </div>
+              @if (review.comment) {
+                <p class="mt-2 text-sm text-hg-charcoal/70">{{ review.comment }}</p>
+              }
+            </div>
+            <div class="flex shrink-0 gap-3">
+              <button type="button" (click)="editar(review)" class="text-sm font-medium text-gold-600 hover:text-gold-700">
+                Editar
+              </button>
+              <button type="button" (click)="eliminar(review)" class="text-sm font-medium text-red-500 hover:text-red-600">
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

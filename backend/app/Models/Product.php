@@ -50,6 +50,11 @@ class Product extends Model
         return $this->hasMany(Favorite::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class)->latest();
+    }
+
     /**
      * Stock total sumando todas las variantes del producto.
      */
