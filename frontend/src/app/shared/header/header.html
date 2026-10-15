@@ -56,7 +56,7 @@
       @if (authService.isLoggedIn()) {
         @if (authService.currentUser()?.role === 'administrador') {
           <a
-            routerLink="/admin/productos"
+            routerLink="/admin/ventas"
             class="hidden rounded-full border border-gold-300 px-4 py-1.5 text-sm font-medium text-hg-black transition hover:border-gold-500 hover:text-gold-600 sm:inline"
           >
             Panel admin
