@@ -20,6 +20,7 @@ export class AddressesPage {
 
   protected readonly addresses = signal<Address[]>([]);
   protected readonly loading = signal(true);
+  protected readonly error = signal(false);
   protected readonly saving = signal(false);
   protected readonly formErrors = signal<ValidationErrors>({});
   protected readonly editingId = signal<number | null>(null);
@@ -109,18 +110,27 @@ export class AddressesPage {
     });
   }
 
+  protected reintentar(): void {
+    this.cargarDirecciones();
+  }
+
   protected eliminar(address: Address): void {
     this.addressService.deleteAddress(address.id).subscribe(() => this.cargarDirecciones());
   }
 
   private cargarDirecciones(): void {
     this.loading.set(true);
+    this.error.set(false);
+
     this.addressService.getAddresses().subscribe({
       next: (addresses) => {
         this.addresses.set(addresses);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.error.set(true);
+      },
     });
   }
 }

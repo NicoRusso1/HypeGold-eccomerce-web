@@ -24,17 +24,34 @@ export class Home {
   private readonly productService = inject(ProductService);
 
   protected readonly categorias = signal<Category[]>([]);
+  protected readonly categoriasLoading = signal(true);
+  protected readonly categoriasError = signal(false);
+
   protected readonly destacados = signal<Product[]>([]);
+  protected readonly destacadosLoading = signal(true);
+  protected readonly destacadosError = signal(false);
 
   constructor() {
     this.categoryService.getCategories().subscribe({
-      next: (categorias) => this.categorias.set(categorias),
-      error: () => this.categorias.set([]),
+      next: (categorias) => {
+        this.categorias.set(categorias);
+        this.categoriasLoading.set(false);
+      },
+      error: () => {
+        this.categoriasLoading.set(false);
+        this.categoriasError.set(true);
+      },
     });
 
     this.productService.getProducts({ sort: 'recientes', per_page: 3 }).subscribe({
-      next: (response) => this.destacados.set(response.data),
-      error: () => this.destacados.set([]),
+      next: (response) => {
+        this.destacados.set(response.data);
+        this.destacadosLoading.set(false);
+      },
+      error: () => {
+        this.destacadosLoading.set(false);
+        this.destacadosError.set(true);
+      },
     });
   }
 

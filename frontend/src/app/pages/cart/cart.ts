@@ -14,13 +14,27 @@ export class CartPage {
   protected readonly cartService = inject(CartService);
 
   protected readonly loading = signal(true);
+  protected readonly error = signal(false);
   protected readonly updatingItemId = signal<number | null>(null);
   protected readonly errorPorItem = signal<Record<number, string>>({});
 
   constructor() {
+    this.cargarCarrito();
+  }
+
+  protected reintentar(): void {
+    this.error.set(false);
+    this.loading.set(true);
+    this.cargarCarrito();
+  }
+
+  private cargarCarrito(): void {
     this.cartService.loadCart().subscribe({
       next: () => this.loading.set(false),
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.error.set(true);
+      },
     });
   }
 

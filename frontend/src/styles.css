@@ -24,3 +24,15 @@
 body {
   @apply bg-hg-ivory text-hg-black font-sans antialiased;
 }
+
+/*
+  Varios controles usan focus:outline-none para quitar el outline feo por
+  defecto del navegador, pero sin esto quedan sin ningún indicador visible
+  de foco para navegación por teclado. Esta regla, al no estar dentro de
+  ningún @layer de Tailwind, tiene prioridad sobre esas utilidades (las
+  reglas sin layer siempre ganan sobre las que están en un layer).
+*/
+:focus-visible {
+  outline: 2px solid var(--color-gold-500);
+  outline-offset: 2px;
+}
