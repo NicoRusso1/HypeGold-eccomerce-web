@@ -19,6 +19,7 @@ export class Header {
   protected readonly cartService = inject(CartService);
 
   protected readonly categories = signal<Category[]>([]);
+  protected readonly menuAbierto = signal(false);
 
   constructor() {
     this.categoryService.getCategories().subscribe({
@@ -30,5 +31,13 @@ export class Header {
 
   protected logout(): void {
     this.authService.logout().subscribe(() => this.router.navigateByUrl('/'));
+  }
+
+  protected toggleMenu(): void {
+    this.menuAbierto.update((abierto) => !abierto);
+  }
+
+  protected cerrarMenu(): void {
+    this.menuAbierto.set(false);
   }
 }

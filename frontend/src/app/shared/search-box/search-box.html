@@ -7,7 +7,7 @@
       (focus)="onFocus()"
       placeholder="Buscar joyas..."
       aria-label="Buscar productos"
-      class="w-full rounded-full border border-gold-200 bg-white px-4 py-2 pr-9 text-sm focus:border-gold-400 focus:outline-none"
+      class="w-full rounded-full border border-gold-200 bg-surface px-4 py-2 pr-9 text-sm focus:border-gold-400 focus:outline-none"
     />
     <button type="submit" aria-label="Buscar" class="absolute right-2 top-1/2 -translate-y-1/2 text-hg-charcoal/60 hover:text-gold-600">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
@@ -17,7 +17,7 @@
   </form>
 
   @if (open() && query().trim().length >= 2) {
-    <div class="absolute left-0 right-0 top-full z-50 mt-2 max-h-96 overflow-y-auto rounded-2xl border border-gold-200/60 bg-white p-2 shadow-lg">
+    <div class="absolute left-0 right-0 top-full z-50 mt-2 max-h-96 overflow-y-auto rounded-2xl border border-gold-200/60 bg-surface p-2 shadow-lg">
       @if (loading()) {
         <p class="px-3 py-4 text-center text-sm text-hg-charcoal/60">Buscando...</p>
       } @else if (suggestions().length > 0) {
