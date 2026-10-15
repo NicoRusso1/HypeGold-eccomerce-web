@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Category } from '../../../core/models/category.model';
 import { AdminCategoryService } from '../../../core/services/admin-category.service';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 import { AdminNav } from '../../../shared/admin-nav/admin-nav';
 
 interface ValidationErrors {
@@ -18,6 +19,7 @@ interface ValidationErrors {
 export class AdminCategoryListPage {
   private readonly fb = inject(FormBuilder);
   private readonly categoryService = inject(AdminCategoryService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly categories = signal<Category[]>([]);
   protected readonly loading = signal(true);
@@ -86,7 +88,16 @@ export class AdminCategoryListPage {
     });
   }
 
-  protected eliminar(category: Category): void {
+  protected async eliminar(category: Category): Promise<void> {
+    const confirmado = await this.confirmDialog.confirm({
+      title: 'Eliminar categoría',
+      message: `¿Seguro que querés eliminar "${category.name}"? Esta acción no se puede deshacer.`,
+    });
+
+    if (!confirmado) {
+      return;
+    }
+
     this.deleteError.set(null);
 
     this.categoryService.deleteCategory(category.id).subscribe({

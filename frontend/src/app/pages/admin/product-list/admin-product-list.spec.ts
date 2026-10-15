@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 import { AdminProductListPage } from './admin-product-list';
 
 describe('AdminProductListPage', () => {
@@ -58,5 +59,59 @@ describe('AdminProductListPage', () => {
 
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('Todavía no hay productos cargados');
+  });
+
+  it('elimina un producto tras confirmar', async () => {
+    const producto = {
+      id: 1,
+      name: 'Cadena cubana',
+      slug: 'cadena-cubana',
+      description: null,
+      material: 'Oro laminado',
+      base_price: 45000,
+      active: true,
+      category: null,
+    };
+    httpMock.expectOne((r) => r.url.endsWith('/admin/products')).flush({
+      data: [producto],
+      meta: { current_page: 1, last_page: 1, per_page: 15, total: 1 },
+    });
+
+    const confirmDialog = TestBed.inject(ConfirmDialogService);
+    const promesa = component['eliminar'](producto);
+    confirmDialog.resolve(true);
+    await promesa;
+
+    httpMock.expectOne((r) => r.url.endsWith('/admin/products/1') && r.method === 'DELETE').flush(null);
+    httpMock.expectOne((r) => r.url.endsWith('/admin/products')).flush({
+      data: [],
+      meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 },
+    });
+
+    expect(component['products']()).toHaveLength(0);
+  });
+
+  it('no elimina el producto si se cancela la confirmacion', async () => {
+    const producto = {
+      id: 1,
+      name: 'Cadena cubana',
+      slug: 'cadena-cubana',
+      description: null,
+      material: 'Oro laminado',
+      base_price: 45000,
+      active: true,
+      category: null,
+    };
+    httpMock.expectOne((r) => r.url.endsWith('/admin/products')).flush({
+      data: [producto],
+      meta: { current_page: 1, last_page: 1, per_page: 15, total: 1 },
+    });
+
+    const confirmDialog = TestBed.inject(ConfirmDialogService);
+    const promesa = component['eliminar'](producto);
+    confirmDialog.resolve(false);
+    await promesa;
+
+    httpMock.expectNone((r) => r.method === 'DELETE');
   });
 });

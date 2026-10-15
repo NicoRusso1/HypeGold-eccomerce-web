@@ -6,6 +6,7 @@ import { AdminProductImage } from '../../../core/models/admin-product.model';
 import { Category } from '../../../core/models/category.model';
 import { AdminProductService } from '../../../core/services/admin-product.service';
 import { CategoryService } from '../../../core/services/category.service';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 import { AdminNav } from '../../../shared/admin-nav/admin-nav';
 
 interface ValidationErrors {
@@ -24,6 +25,7 @@ export class AdminProductFormPage {
   private readonly router = inject(Router);
   private readonly productService = inject(AdminProductService);
   private readonly categoryService = inject(CategoryService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly categories = signal<Category[]>([]);
   protected readonly loading = signal(true);
@@ -171,10 +173,19 @@ export class AdminProductFormPage {
     });
   }
 
-  protected eliminarImagen(image: AdminProductImage): void {
+  protected async eliminarImagen(image: AdminProductImage): Promise<void> {
     const id = this.productId();
 
     if (!id) {
+      return;
+    }
+
+    const confirmado = await this.confirmDialog.confirm({
+      title: 'Eliminar foto',
+      message: '¿Seguro que querés eliminar esta foto del producto? Esta acción no se puede deshacer.',
+    });
+
+    if (!confirmado) {
       return;
     }
 

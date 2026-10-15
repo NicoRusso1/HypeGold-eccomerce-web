@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Address } from '../../core/models/address.model';
 import { AddressService } from '../../core/services/address.service';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service';
 
 interface ValidationErrors {
   [field: string]: string[];
@@ -17,6 +18,7 @@ interface ValidationErrors {
 export class AddressesPage {
   private readonly fb = inject(FormBuilder);
   private readonly addressService = inject(AddressService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly addresses = signal<Address[]>([]);
   protected readonly loading = signal(true);
@@ -114,7 +116,16 @@ export class AddressesPage {
     this.cargarDirecciones();
   }
 
-  protected eliminar(address: Address): void {
+  protected async eliminar(address: Address): Promise<void> {
+    const confirmado = await this.confirmDialog.confirm({
+      title: 'Eliminar dirección',
+      message: `¿Seguro que querés eliminar ${address.label ? '"' + address.label + '"' : 'esta dirección'}? Esta acción no se puede deshacer.`,
+    });
+
+    if (!confirmado) {
+      return;
+    }
+
     this.addressService.deleteAddress(address.id).subscribe(() => this.cargarDirecciones());
   }
 

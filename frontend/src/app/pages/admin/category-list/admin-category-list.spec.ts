@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 import { AdminCategoryListPage } from './admin-category-list';
 
 describe('AdminCategoryListPage', () => {
@@ -64,10 +65,13 @@ describe('AdminCategoryListPage', () => {
     expect(component['form'].value.name).toBe('Cadenas');
   });
 
-  it('muestra el error cuando no se puede eliminar una categoria con productos', () => {
+  it('muestra el error cuando no se puede eliminar una categoria con productos', async () => {
     flushCategories([{ id: 1, name: 'Cadenas', slug: 'cadenas', description: null, products_count: 3 }]);
 
-    component['eliminar']({ id: 1, name: 'Cadenas', slug: 'cadenas', description: null, products_count: 3 });
+    const confirmDialog = TestBed.inject(ConfirmDialogService);
+    const promesa = component['eliminar']({ id: 1, name: 'Cadenas', slug: 'cadenas', description: null, products_count: 3 });
+    confirmDialog.resolve(true);
+    await promesa;
 
     const deleteReq = httpMock.expectOne((r) => r.url.endsWith('/admin/categories/1') && r.method === 'DELETE');
     deleteReq.flush(
@@ -76,5 +80,16 @@ describe('AdminCategoryListPage', () => {
     );
 
     expect(component['deleteError']()).toContain('No se puede eliminar');
+  });
+
+  it('no elimina la categoria si se cancela la confirmacion', async () => {
+    flushCategories([{ id: 1, name: 'Cadenas', slug: 'cadenas', description: null, products_count: 0 }]);
+
+    const confirmDialog = TestBed.inject(ConfirmDialogService);
+    const promesa = component['eliminar']({ id: 1, name: 'Cadenas', slug: 'cadenas', description: null, products_count: 0 });
+    confirmDialog.resolve(false);
+    await promesa;
+
+    httpMock.expectNone((r) => r.method === 'DELETE');
   });
 });

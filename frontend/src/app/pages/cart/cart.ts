@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../core/services/cart.service';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service';
 
 @Component({
   imports: [CurrencyPipe, RouterLink],
@@ -12,6 +13,7 @@ import { CartService } from '../../core/services/cart.service';
 })
 export class CartPage {
   protected readonly cartService = inject(CartService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly loading = signal(true);
   protected readonly error = signal(false);
@@ -64,7 +66,17 @@ export class CartPage {
     });
   }
 
-  protected vaciarCarrito(): void {
+  protected async vaciarCarrito(): Promise<void> {
+    const confirmado = await this.confirmDialog.confirm({
+      title: 'Vaciar carrito',
+      message: '¿Seguro que querés vaciar tu carrito? Se van a quitar todos los productos.',
+      confirmText: 'Vaciar',
+    });
+
+    if (!confirmado) {
+      return;
+    }
+
     this.cartService.clear().subscribe();
   }
 

@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 import { AdminProductFormPage } from './admin-product-form';
 
 describe('AdminProductFormPage', () => {
@@ -149,7 +150,7 @@ describe('AdminProductFormPage', () => {
       expect(component['images']()).toHaveLength(1);
     });
 
-    it('elimina una imagen', () => {
+    it('elimina una imagen tras confirmar', async () => {
       flushCategories();
       httpMock.expectOne((r) => r.url.endsWith('/admin/products/5')).flush({
         data: {
@@ -163,7 +164,10 @@ describe('AdminProductFormPage', () => {
         },
       });
 
-      component['eliminarImagen']({ id: 7, url: 'https://ejemplo.com/foto.jpg', order: 0 });
+      const confirmDialog = TestBed.inject(ConfirmDialogService);
+      const promesa = component['eliminarImagen']({ id: 7, url: 'https://ejemplo.com/foto.jpg', order: 0 });
+      confirmDialog.resolve(true);
+      await promesa;
 
       httpMock.expectOne((r) => r.url.endsWith('/admin/products/5/images/7') && r.method === 'DELETE').flush(null);
 
