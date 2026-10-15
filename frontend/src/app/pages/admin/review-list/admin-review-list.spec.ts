@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 import { AdminReviewListPage } from './admin-review-list';
 
 describe('AdminReviewListPage', () => {
@@ -72,5 +73,32 @@ describe('AdminReviewListPage', () => {
     req.flush({ data: [] });
 
     expect(component['filtroProductoId']()).toBe(1);
+  });
+
+  it('elimina una resena tras confirmar', async () => {
+    const review = { id: 1, author_name: 'Marcela G.', rating: 5, comment: 'Hermosa', created_at: '2026-10-01T00:00:00Z', product: { id: 1, name: 'Cadena cubana' } };
+    flushInitial([review]);
+
+    const confirmDialog = TestBed.inject(ConfirmDialogService);
+    const promesa = component['eliminar'](review);
+    confirmDialog.resolve(true);
+    await promesa;
+
+    httpMock.expectOne((r) => r.url.endsWith('/admin/reviews/1') && r.method === 'DELETE').flush(null);
+    httpMock.expectOne((r) => r.url.endsWith('/admin/reviews') && r.method === 'GET').flush({ data: [] });
+
+    expect(component['reviews']()).toHaveLength(0);
+  });
+
+  it('no elimina la resena si se cancela la confirmacion', async () => {
+    const review = { id: 1, author_name: 'Marcela G.', rating: 5, comment: 'Hermosa', created_at: '2026-10-01T00:00:00Z', product: { id: 1, name: 'Cadena cubana' } };
+    flushInitial([review]);
+
+    const confirmDialog = TestBed.inject(ConfirmDialogService);
+    const promesa = component['eliminar'](review);
+    confirmDialog.resolve(false);
+    await promesa;
+
+    httpMock.expectNone((r) => r.method === 'DELETE');
   });
 });

@@ -198,4 +198,41 @@ class AdminProductTest extends TestCase
         $response->assertNoContent();
         $this->assertDatabaseMissing('product_images', ['id' => $image->id]);
     }
+
+    public function test_un_administrador_puede_eliminar_un_producto(): void
+    {
+        Sanctum::actingAs(User::factory()->admin()->create());
+        $product = Product::factory()->create();
+        $variant = ProductVariant::factory()->create(['product_id' => $product->id]);
+
+        $response = $this->deleteJson("/api/admin/products/{$product->id}");
+
+        $response->assertNoContent();
+        $this->assertDatabaseMissing('products', ['id' => $product->id]);
+        $this->assertDatabaseMissing('product_variants', ['id' => $variant->id]);
+    }
+
+    public function test_eliminar_un_producto_no_rompe_el_historial_de_pedidos(): void
+    {
+        Sanctum::actingAs(User::factory()->admin()->create());
+        $product = Product::factory()->create();
+        $variant = ProductVariant::factory()->create(['product_id' => $product->id]);
+        $item = \App\Models\OrderItem::factory()->create([
+            'product_variant_id' => $variant->id,
+            'product_name' => 'Cadena de prueba',
+        ]);
+
+        $this->deleteJson("/api/admin/products/{$product->id}")->assertNoContent();
+
+        $this->assertDatabaseHas('order_items', ['id' => $item->id, 'product_variant_id' => null, 'product_name' => 'Cadena de prueba']);
+    }
+
+    public function test_un_cliente_no_puede_eliminar_un_producto(): void
+    {
+        Sanctum::actingAs(User::factory()->create());
+        $product = Product::factory()->create();
+
+        $this->deleteJson("/api/admin/products/{$product->id}")->assertForbidden();
+        $this->assertDatabaseHas('products', ['id' => $product->id]);
+    }
 }

@@ -38,4 +38,8 @@ export class AdminProductService {
   deleteImage(productId: number, imageId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${productId}/images/${imageId}`);
   }
+
+  deleteProduct(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
 }
