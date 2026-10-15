@@ -12,3 +12,12 @@ export const ORDER_STATUS_LABELS: Record<string, string> = {
 export function ordenStatusLabel(status: string): string {
   return ORDER_STATUS_LABELS[status] ?? status;
 }
+
+/** Transiciones de estado válidas, en espejo de OrderStatus::transicionesValidas() del backend. */
+export const ORDER_STATUS_TRANSITIONS: Record<string, string[]> = {
+  pendiente: ['pagado', 'cancelado'],
+  pagado: ['enviado', 'cancelado'],
+  enviado: ['entregado'],
+  entregado: [],
+  cancelado: [],
+};
