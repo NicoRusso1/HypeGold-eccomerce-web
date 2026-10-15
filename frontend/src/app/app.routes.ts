@@ -18,6 +18,8 @@ import { AdminProductListPage } from './pages/admin/product-list/admin-product-l
 import { AdminProductFormPage } from './pages/admin/product-form/admin-product-form';
 import { AdminCategoryListPage } from './pages/admin/category-list/admin-category-list';
 import { AdminStockListPage } from './pages/admin/stock-list/admin-stock-list';
+import { AdminOrderListPage } from './pages/admin/order-list/admin-order-list';
+import { AdminOrderDetailPage } from './pages/admin/order-detail/admin-order-detail';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 
@@ -96,6 +98,18 @@ export const routes: Routes = [
     path: 'admin/stock',
     component: AdminStockListPage,
     title: 'Stock · Admin HypeGold',
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/pedidos',
+    component: AdminOrderListPage,
+    title: 'Pedidos · Admin HypeGold',
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/pedidos/:id',
+    component: AdminOrderDetailPage,
+    title: 'Pedido · Admin HypeGold',
     canActivate: [adminGuard],
   },
 ];
