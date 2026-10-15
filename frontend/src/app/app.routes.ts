@@ -16,6 +16,8 @@ import { OrderDetailPage } from './pages/order-detail/order-detail';
 import { PaymentResultPage } from './pages/payment-result/payment-result';
 import { AdminProductListPage } from './pages/admin/product-list/admin-product-list';
 import { AdminProductFormPage } from './pages/admin/product-form/admin-product-form';
+import { AdminCategoryListPage } from './pages/admin/category-list/admin-category-list';
+import { AdminStockListPage } from './pages/admin/stock-list/admin-stock-list';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 
@@ -82,6 +84,18 @@ export const routes: Routes = [
     path: 'admin/productos/:id/editar',
     component: AdminProductFormPage,
     title: 'Editar producto · Admin HypeGold',
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/categorias',
+    component: AdminCategoryListPage,
+    title: 'Categorías · Admin HypeGold',
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/stock',
+    component: AdminStockListPage,
+    title: 'Stock · Admin HypeGold',
     canActivate: [adminGuard],
   },
 ];

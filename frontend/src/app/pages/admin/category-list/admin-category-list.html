@@ -1,0 +1,99 @@
+<app-admin-nav />
+
+<section class="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+  <h1 class="font-display text-3xl font-semibold text-hg-black">Categorías</h1>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="mt-8 space-y-4 rounded-2xl border border-gold-200/60 bg-white p-6">
+    <h2 class="font-display text-lg font-semibold text-hg-black">
+      {{ editingId() ? 'Editar categoría' : 'Nueva categoría' }}
+    </h2>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <label for="name" class="block text-sm font-medium text-hg-charcoal">Nombre</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+        />
+        @if (errors()['name']) {
+          <p class="mt-1 text-xs text-red-600">{{ errors()['name'][0] }}</p>
+        }
+      </div>
+
+      <div>
+        <label for="description" class="block text-sm font-medium text-hg-charcoal">Descripción</label>
+        <input
+          id="description"
+          type="text"
+          formControlName="description"
+          class="mt-1 w-full rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+        />
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button
+        type="submit"
+        [disabled]="saving()"
+        class="rounded-full bg-gold-500 px-6 py-2.5 text-sm font-semibold text-hg-black transition hover:bg-gold-400 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {{ saving() ? 'Guardando...' : editingId() ? 'Guardar cambios' : 'Crear categoría' }}
+      </button>
+      @if (editingId()) {
+        <button
+          type="button"
+          (click)="cancelarEdicion()"
+          class="text-sm font-medium text-hg-charcoal/70 hover:text-hg-charcoal"
+        >
+          Cancelar
+        </button>
+      }
+    </div>
+  </form>
+
+  @if (deleteError()) {
+    <p class="mt-4 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700">{{ deleteError() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Cargando categorías...</p>
+  } @else if (categories().length === 0) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Todavía no hay categorías cargadas.</p>
+  } @else {
+    <div class="mt-8 overflow-hidden rounded-2xl border border-gold-200/60 bg-white">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-gold-50 text-xs font-semibold uppercase tracking-wide text-hg-charcoal/70">
+          <tr>
+            <th class="px-4 py-3">Nombre</th>
+            <th class="px-4 py-3">Productos</th>
+            <th class="px-4 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gold-200/60">
+          @for (category of categories(); track category.id) {
+            <tr>
+              <td class="px-4 py-3 font-medium text-hg-charcoal">{{ category.name }}</td>
+              <td class="px-4 py-3 text-hg-charcoal/70">{{ category.products_count }}</td>
+              <td class="px-4 py-3 text-right">
+                <button type="button" (click)="editar(category)" class="text-sm font-medium text-gold-600 hover:text-gold-700">
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  (click)="eliminar(category)"
+                  [disabled]="category.products_count > 0"
+                  class="ml-4 text-sm font-medium text-red-500 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
+                  [title]="category.products_count > 0 ? 'No se puede eliminar: tiene productos asociados' : ''"
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
