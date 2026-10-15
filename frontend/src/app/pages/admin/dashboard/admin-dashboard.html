@@ -2,7 +2,7 @@
 
 <section class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
   <div class="flex flex-wrap items-end justify-between gap-4">
-    <h1 class="font-display text-3xl font-semibold text-hg-black">Ventas</h1>
+    <h1 class="font-display uppercase tracking-wide text-3xl font-semibold text-hg-black">Ventas</h1>
 
     <div class="flex flex-wrap items-end gap-3">
       <div>
@@ -28,7 +28,7 @@
       <button
         type="button"
         (click)="aplicarFiltro()"
-        class="rounded-full bg-gold-500 px-5 py-2 text-sm font-semibold text-hg-black transition hover:bg-gold-400"
+        class="rounded-full bg-gold-500 px-5 py-2 text-sm font-semibold text-black transition hover:bg-gold-400"
       >
         Aplicar
       </button>
@@ -47,21 +47,21 @@
   } @else if (resumen(); as r) {
     <!-- Tarjetas resumen -->
     <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div class="rounded-2xl border border-gold-200/60 bg-white p-6">
+      <div class="rounded-2xl border border-gold-200/60 bg-surface p-6">
         <p class="text-sm text-hg-charcoal/60">Total vendido</p>
         <p class="mt-1 font-display text-3xl font-semibold text-gold-600">
           {{ r.total_ventas | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
         </p>
       </div>
-      <div class="rounded-2xl border border-gold-200/60 bg-white p-6">
+      <div class="rounded-2xl border border-gold-200/60 bg-surface p-6">
         <p class="text-sm text-hg-charcoal/60">Pedidos vendidos</p>
-        <p class="mt-1 font-display text-3xl font-semibold text-hg-black">{{ r.cantidad_ventas }}</p>
+        <p class="mt-1 font-display uppercase tracking-wide text-3xl font-semibold text-hg-black">{{ r.cantidad_ventas }}</p>
       </div>
     </div>
 
     <!-- Pedidos por estado -->
-    <div class="mt-6 rounded-2xl border border-gold-200/60 bg-white p-6">
-      <h2 class="font-display text-lg font-semibold text-hg-black">Pedidos por estado</h2>
+    <div class="mt-6 rounded-2xl border border-gold-200/60 bg-surface p-6">
+      <h2 class="font-display uppercase tracking-wide text-lg font-semibold text-hg-black">Pedidos por estado</h2>
       <div class="mt-4 flex flex-wrap gap-3">
         @for (estado of estados; track estado) {
           <span class="rounded-full bg-gold-50 px-4 py-1.5 text-sm text-hg-charcoal">
@@ -72,8 +72,8 @@
     </div>
 
     <!-- Gráfico de ventas por día -->
-    <div class="mt-6 rounded-2xl border border-gold-200/60 bg-white p-6">
-      <h2 class="font-display text-lg font-semibold text-hg-black">Ventas por día</h2>
+    <div class="mt-6 rounded-2xl border border-gold-200/60 bg-surface p-6">
+      <h2 class="font-display uppercase tracking-wide text-lg font-semibold text-hg-black">Ventas por día</h2>
       @if (grafico().length === 0) {
         <p class="mt-4 text-sm text-hg-charcoal/60">No hubo ventas en este rango de fechas.</p>
       } @else {
@@ -95,8 +95,8 @@
     </div>
 
     <!-- Productos más vendidos -->
-    <div class="mt-6 rounded-2xl border border-gold-200/60 bg-white p-6">
-      <h2 class="font-display text-lg font-semibold text-hg-black">Productos más vendidos</h2>
+    <div class="mt-6 rounded-2xl border border-gold-200/60 bg-surface p-6">
+      <h2 class="font-display uppercase tracking-wide text-lg font-semibold text-hg-black">Productos más vendidos</h2>
       @if (r.productos_mas_vendidos.length === 0) {
         <p class="mt-4 text-sm text-hg-charcoal/60">No hubo ventas en este rango de fechas.</p>
       } @else {

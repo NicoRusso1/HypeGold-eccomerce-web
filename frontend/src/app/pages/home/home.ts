@@ -6,11 +6,9 @@ import { Product } from '../../core/models/product.model';
 import { CategoryService } from '../../core/services/category.service';
 import { ProductService } from '../../core/services/product.service';
 
-const ICONOS_POR_CATEGORIA: Record<string, string> = {
-  cadenas: '⛓️',
-  pulseras: '✨',
-  anillos: '💍',
-  aros: '💎',
+const FOTO_POR_CATEGORIA: Record<string, string> = {
+  cadenas: 'assets/hero/cat-cadenas.jpg',
+  pulseras: 'assets/hero/cat-pulseras.jpg',
 };
 
 @Component({
@@ -55,7 +53,7 @@ export class Home {
     });
   }
 
-  protected iconoDe(categoria: Category): string {
-    return ICONOS_POR_CATEGORIA[categoria.slug] ?? '💫';
+  protected fotoDe(categoria: Category): string | null {
+    return FOTO_POR_CATEGORIA[categoria.slug] ?? null;
   }
 }

@@ -1,28 +1,56 @@
 @import "tailwindcss";
 
 @theme {
-  /* Paleta de marca HypeGold, tomada del logo (dorado + negro). */
-  --color-gold-50: #fdf8ec;
-  --color-gold-100: #faedc9;
-  --color-gold-200: #f4d78d;
-  --color-gold-300: #edbd56;
-  --color-gold-400: #e2a52f;
-  --color-gold-500: #cc8b1c;
-  --color-gold-600: #a86f16;
-  --color-gold-700: #825416;
-  --color-gold-800: #5f3d16;
-  --color-gold-900: #3f2913;
+  /* Paleta HypeGold — dirección streetwear/hype: fondo casi negro, dorado
+     premium como acento puntual. La escala "gold" se reutiliza para fills,
+     bordes y texto según la intensidad (50-200 = fills/bordes sutiles sobre
+     fondo oscuro, 400-700 = acento visible/texto). */
+  --color-gold-50: #1e1912;
+  --color-gold-100: #2a2316;
+  --color-gold-200: #3a3a34;
+  --color-gold-300: #a9843c;
+  --color-gold-400: #e8b64b;
+  --color-gold-500: #d9a232;
+  --color-gold-600: #f0c875;
+  --color-gold-700: #f6dba0;
+  --color-gold-800: #fceac2;
+  --color-gold-900: #fff6e3;
 
-  --color-hg-black: #181715;
-  --color-hg-charcoal: #262421;
-  --color-hg-ivory: #faf8f4;
+  /* Acento secundario (uso puntual: tags "nuevo", detalles). */
+  --color-lime: #cfff04;
 
-  --font-display: "Playfair Display", ui-serif, Georgia, serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* hg-ivory = fondo de página; hg-black = texto principal (ink);
+     hg-charcoal = texto secundario/muted. Invertidos respecto al diseño
+     original claro: ahora el sitio es oscuro de base. */
+  --color-hg-black: #fafaf7;
+  --color-hg-charcoal: #c9c8c2;
+  --color-hg-ivory: #0b0b0a;
+
+  /* Superficie elevada (tarjetas, inputs, modales) sobre el fondo. */
+  --color-surface: #141412;
+
+  --font-display: "Anton", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
   @apply bg-hg-ivory text-hg-black font-sans antialiased;
+}
+
+.display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+/* Los inputs/selects/textareas de todo el sitio no tienen una clase bg-*
+   propia (heredaban el blanco por defecto del navegador), así que sin esto
+   quedarían como rectángulos blancos sobre el fondo oscuro. */
+input,
+select,
+textarea {
+  background-color: var(--color-surface);
+  color: var(--color-hg-black);
 }
 
 /*
@@ -33,12 +61,14 @@ body {
   reglas sin layer siempre ganan sobre las que están en un layer).
 */
 :focus-visible {
-  outline: 2px solid var(--color-gold-500);
+  outline: 2px solid var(--color-gold-400);
   outline-offset: 2px;
 }
 
 /* Al imprimir un comprobante (app-receipt), se oculta todo el chrome de la
-   página para que solo se imprima el comprobante en sí. */
+   página para que solo se imprima el comprobante en sí. El comprobante
+   mantiene su propia paleta clara (pensada para papel), independiente del
+   tema oscuro del resto del sitio. */
 @media print {
   app-header,
   app-footer,

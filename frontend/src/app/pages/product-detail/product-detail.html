@@ -52,7 +52,7 @@
             @if (p.category) {
               <p class="text-sm font-medium uppercase tracking-wide text-gold-600">{{ p.category.name }}</p>
             }
-            <h1 class="mt-1 font-display text-3xl font-semibold text-hg-black">{{ p.name }}</h1>
+            <h1 class="mt-1 font-display uppercase tracking-wide text-3xl font-semibold text-hg-black">{{ p.name }}</h1>
             @if (p.average_rating) {
               <div class="mt-1 flex items-center gap-2">
                 <app-star-rating [rating]="p.average_rating" />
@@ -129,7 +129,7 @@
           type="button"
           [disabled]="(selectedVariant()?.stock ?? p.total_stock) === 0 || agregando()"
           (click)="agregarAlCarrito()"
-          class="mt-6 w-full rounded-full bg-gold-500 px-8 py-3 text-sm font-semibold text-hg-black transition hover:bg-gold-400 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
+          class="mt-6 w-full rounded-full bg-gold-500 px-8 py-3 text-sm font-semibold text-black transition hover:bg-gold-400 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
         >
           {{ agregando() ? 'Agregando...' : 'Agregar al carrito' }}
         </button>
@@ -144,8 +144,8 @@
     </div>
 
     @if (p.reviews.length > 0) {
-      <div class="mt-10 rounded-2xl border border-gold-200/60 bg-white p-6">
-        <h2 class="font-display text-lg font-semibold text-hg-black">Reseñas</h2>
+      <div class="mt-10 rounded-2xl border border-gold-200/60 bg-surface p-6">
+        <h2 class="font-display uppercase tracking-wide text-lg font-semibold text-hg-black">Reseñas</h2>
         <div class="mt-4 divide-y divide-gold-200/60">
           @for (review of p.reviews; track review.id) {
             <div class="py-4 first:pt-0 last:pb-0">

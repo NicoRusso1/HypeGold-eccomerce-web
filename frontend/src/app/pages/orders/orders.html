@@ -1,5 +1,5 @@
 <section class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-  <h1 class="font-display text-3xl font-semibold text-hg-black">Mis pedidos</h1>
+  <h1 class="font-display uppercase tracking-wide text-3xl font-semibold text-hg-black">Mis pedidos</h1>
 
   @if (loading()) {
     <p class="mt-10 text-center text-hg-charcoal/60">Cargando pedidos...</p>
@@ -18,7 +18,7 @@
       </a>
     </div>
   } @else {
-    <div class="mt-8 divide-y divide-gold-200/60 rounded-2xl border border-gold-200/60 bg-white">
+    <div class="mt-8 divide-y divide-gold-200/60 rounded-2xl border border-gold-200/60 bg-surface">
       @for (order of orders(); track order.id) {
         <a
           [routerLink]="['/cuenta/pedidos', order.id]"

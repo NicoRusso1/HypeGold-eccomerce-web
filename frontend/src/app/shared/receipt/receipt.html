@@ -5,24 +5,27 @@
   <button
     type="button"
     (click)="imprimir()"
-    class="rounded-full bg-gold-500 px-5 py-2 text-sm font-semibold text-hg-black transition hover:bg-gold-400"
+    class="rounded-full bg-gold-500 px-5 py-2 text-sm font-semibold text-black transition hover:bg-gold-400"
   >
     Imprimir / Descargar PDF
   </button>
 </div>
 
-<div class="receipt rounded-2xl border border-gold-200/60 bg-white p-8">
-  <div class="flex items-start justify-between border-b border-gold-200/60 pb-6">
+<!-- El comprobante mantiene su propia paleta clara (pensada para papel),
+     con colores literales en vez de los tokens del tema, independiente de
+     si el resto del sitio está en modo oscuro. -->
+<div class="receipt rounded-2xl border border-zinc-200 bg-white p-8 text-zinc-900">
+  <div class="flex items-start justify-between border-b border-zinc-200 pb-6">
     <div>
-      <p class="font-display text-xl font-semibold text-hg-black">HypeGold Joyas</p>
-      <p class="mt-1 text-sm text-hg-charcoal/70">Concordia, Entre Ríos</p>
-      <p class="text-sm text-hg-charcoal/70">+54 9 345 404 0162 · @hypegold.arg</p>
+      <p class="font-display text-xl font-semibold text-black">HypeGold Joyas</p>
+      <p class="mt-1 text-sm text-zinc-500">Concordia, Entre Ríos</p>
+      <p class="text-sm text-zinc-500">+54 9 345 404 0162 · @hypegold.arg</p>
     </div>
     <div class="text-right">
-      <p class="font-display text-lg font-semibold text-hg-black">Comprobante de compra</p>
-      <p class="text-sm text-hg-charcoal/70">Pedido #{{ pedido.id }}</p>
-      <p class="text-sm text-hg-charcoal/70">{{ pedido.created_at | date: 'dd/MM/yyyy HH:mm' }}</p>
-      <span class="mt-1 inline-block rounded-full bg-gold-50 px-3 py-0.5 text-xs font-medium text-gold-700">
+      <p class="font-display text-lg font-semibold text-black">Comprobante de compra</p>
+      <p class="text-sm text-zinc-500">Pedido #{{ pedido.id }}</p>
+      <p class="text-sm text-zinc-500">{{ pedido.created_at | date: 'dd/MM/yyyy HH:mm' }}</p>
+      <span class="mt-1 inline-block rounded-full bg-amber-50 px-3 py-0.5 text-xs font-medium text-amber-800">
         {{ ordenStatusLabel(pedido.status) }}
       </span>
     </div>
@@ -31,59 +34,59 @@
   <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
     @if (customerName()) {
       <div>
-        <p class="text-xs font-semibold uppercase tracking-wide text-hg-charcoal/50">Cliente</p>
-        <p class="mt-1 text-sm text-hg-charcoal">{{ customerName() }}</p>
+        <p class="text-xs font-semibold uppercase tracking-wide text-zinc-400">Cliente</p>
+        <p class="mt-1 text-sm text-zinc-600">{{ customerName() }}</p>
       </div>
     }
     <div>
-      <p class="text-xs font-semibold uppercase tracking-wide text-hg-charcoal/50">Enviado a</p>
-      <p class="mt-1 text-sm text-hg-charcoal">{{ pedido.shipping.street }}</p>
-      <p class="text-sm text-hg-charcoal">
+      <p class="text-xs font-semibold uppercase tracking-wide text-zinc-400">Enviado a</p>
+      <p class="mt-1 text-sm text-zinc-600">{{ pedido.shipping.street }}</p>
+      <p class="text-sm text-zinc-600">
         {{ pedido.shipping.city }}, {{ pedido.shipping.province }} ({{ pedido.shipping.postal_code }})
       </p>
-      <p class="text-sm text-hg-charcoal">{{ pedido.shipping.phone }}</p>
+      <p class="text-sm text-zinc-600">{{ pedido.shipping.phone }}</p>
     </div>
   </div>
 
   <table class="mt-8 w-full text-left text-sm">
     <thead>
-      <tr class="border-b border-gold-200/60 text-xs font-semibold uppercase tracking-wide text-hg-charcoal/60">
+      <tr class="border-b border-zinc-200 text-xs font-semibold uppercase tracking-wide text-zinc-400">
         <th class="pb-2">Producto</th>
         <th class="pb-2 text-center">Cant.</th>
         <th class="pb-2 text-right">Precio unit.</th>
         <th class="pb-2 text-right">Subtotal</th>
       </tr>
     </thead>
-    <tbody class="divide-y divide-gold-100">
+    <tbody class="divide-y divide-zinc-100">
       @for (item of pedido.items; track item.id) {
         <tr>
-          <td class="py-2 text-hg-charcoal">
+          <td class="py-2 text-zinc-600">
             {{ item.product_name }}
             @if (item.variant_talle) {
-              <span class="text-hg-charcoal/60"> ({{ item.variant_talle }})</span>
+              <span class="text-zinc-400"> ({{ item.variant_talle }})</span>
             }
           </td>
-          <td class="py-2 text-center text-hg-charcoal">{{ item.quantity }}</td>
-          <td class="py-2 text-right text-hg-charcoal">{{ item.unit_price | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
-          <td class="py-2 text-right text-hg-charcoal">{{ item.subtotal | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+          <td class="py-2 text-center text-zinc-600">{{ item.quantity }}</td>
+          <td class="py-2 text-right text-zinc-600">{{ item.unit_price | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
+          <td class="py-2 text-right text-zinc-600">{{ item.subtotal | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
         </tr>
       }
     </tbody>
   </table>
 
-  <div class="mt-4 flex flex-col items-end gap-1 border-t border-gold-200/60 pt-4 text-sm">
+  <div class="mt-4 flex flex-col items-end gap-1 border-t border-zinc-200 pt-4 text-sm">
     @if (pedido.discount > 0) {
       <p class="text-green-700">
         Descuento{{ pedido.coupon_code ? ' (' + pedido.coupon_code + ')' : '' }}:
         −{{ pedido.discount | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
       </p>
     }
-    <p class="font-display text-xl font-semibold text-hg-black">
+    <p class="font-display text-xl font-semibold text-black">
       Total: {{ pedido.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
     </p>
   </div>
 
-  <p class="mt-8 border-t border-gold-200/60 pt-4 text-center text-xs text-hg-charcoal/50">
+  <p class="mt-8 border-t border-zinc-200 pt-4 text-center text-xs text-zinc-400">
     Este comprobante es un resumen de tu compra y no tiene validez como factura fiscal. ¡Gracias por elegir HypeGold!
   </p>
 </div>
