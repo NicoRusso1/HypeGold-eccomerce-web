@@ -43,7 +43,7 @@ export class Home {
       },
     });
 
-    this.productService.getProducts({ sort: 'recientes', per_page: 3 }).subscribe({
+    this.productService.getProducts({ sort: 'recientes', per_page: 6 }).subscribe({
       next: (response) => {
         this.destacados.set(response.data);
         this.destacadosLoading.set(false);
