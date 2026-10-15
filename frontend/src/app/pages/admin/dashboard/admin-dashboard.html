@@ -1,0 +1,114 @@
+<app-admin-nav />
+
+<section class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <h1 class="font-display text-3xl font-semibold text-hg-black">Ventas</h1>
+
+    <div class="flex flex-wrap items-end gap-3">
+      <div>
+        <label for="desde" class="block text-xs font-medium text-hg-charcoal">Desde</label>
+        <input
+          id="desde"
+          type="date"
+          [ngModel]="desde()"
+          (ngModelChange)="desde.set($event)"
+          class="mt-1 rounded-lg border border-gold-200 px-3 py-1.5 text-sm focus:border-gold-500 focus:outline-none"
+        />
+      </div>
+      <div>
+        <label for="hasta" class="block text-xs font-medium text-hg-charcoal">Hasta</label>
+        <input
+          id="hasta"
+          type="date"
+          [ngModel]="hasta()"
+          (ngModelChange)="hasta.set($event)"
+          class="mt-1 rounded-lg border border-gold-200 px-3 py-1.5 text-sm focus:border-gold-500 focus:outline-none"
+        />
+      </div>
+      <button
+        type="button"
+        (click)="aplicarFiltro()"
+        class="rounded-full bg-gold-500 px-5 py-2 text-sm font-semibold text-hg-black transition hover:bg-gold-400"
+      >
+        Aplicar
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p class="mt-10 text-center text-hg-charcoal/60">Cargando resumen de ventas...</p>
+  } @else if (error()) {
+    <div class="mt-10 text-center">
+      <p class="text-red-500">No pudimos cargar el resumen de ventas. Probá de nuevo en un momento.</p>
+      <button type="button" (click)="reintentar()" class="mt-4 text-sm font-medium text-gold-600 hover:text-gold-700">
+        Reintentar
+      </button>
+    </div>
+  } @else if (resumen(); as r) {
+    <!-- Tarjetas resumen -->
+    <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="rounded-2xl border border-gold-200/60 bg-white p-6">
+        <p class="text-sm text-hg-charcoal/60">Total vendido</p>
+        <p class="mt-1 font-display text-3xl font-semibold text-gold-600">
+          {{ r.total_ventas | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+        </p>
+      </div>
+      <div class="rounded-2xl border border-gold-200/60 bg-white p-6">
+        <p class="text-sm text-hg-charcoal/60">Pedidos vendidos</p>
+        <p class="mt-1 font-display text-3xl font-semibold text-hg-black">{{ r.cantidad_ventas }}</p>
+      </div>
+    </div>
+
+    <!-- Pedidos por estado -->
+    <div class="mt-6 rounded-2xl border border-gold-200/60 bg-white p-6">
+      <h2 class="font-display text-lg font-semibold text-hg-black">Pedidos por estado</h2>
+      <div class="mt-4 flex flex-wrap gap-3">
+        @for (estado of estados; track estado) {
+          <span class="rounded-full bg-gold-50 px-4 py-1.5 text-sm text-hg-charcoal">
+            {{ ordenStatusLabel(estado) }}: <strong>{{ r.pedidos_por_estado[estado] ?? 0 }}</strong>
+          </span>
+        }
+      </div>
+    </div>
+
+    <!-- Gráfico de ventas por día -->
+    <div class="mt-6 rounded-2xl border border-gold-200/60 bg-white p-6">
+      <h2 class="font-display text-lg font-semibold text-hg-black">Ventas por día</h2>
+      @if (grafico().length === 0) {
+        <p class="mt-4 text-sm text-hg-charcoal/60">No hubo ventas en este rango de fechas.</p>
+      } @else {
+        <div class="mt-6 flex h-48 items-end gap-1 overflow-x-auto">
+          @for (barra of grafico(); track barra.fecha) {
+            <div class="flex h-full flex-1 min-w-[10px] flex-col items-center justify-end" [title]="(barra.fecha | date: 'dd/MM') + ': ' + (barra.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0')">
+              <div
+                class="w-full rounded-t bg-gold-400 transition hover:bg-gold-500"
+                [style.height.%]="barra.alturaPorcentaje"
+              ></div>
+            </div>
+          }
+        </div>
+        <div class="mt-2 flex justify-between text-xs text-hg-charcoal/50">
+          <span>{{ grafico()[0].fecha | date: 'dd/MM' }}</span>
+          <span>{{ grafico()[grafico().length - 1].fecha | date: 'dd/MM' }}</span>
+        </div>
+      }
+    </div>
+
+    <!-- Productos más vendidos -->
+    <div class="mt-6 rounded-2xl border border-gold-200/60 bg-white p-6">
+      <h2 class="font-display text-lg font-semibold text-hg-black">Productos más vendidos</h2>
+      @if (r.productos_mas_vendidos.length === 0) {
+        <p class="mt-4 text-sm text-hg-charcoal/60">No hubo ventas en este rango de fechas.</p>
+      } @else {
+        <div class="mt-4 divide-y divide-gold-200/60">
+          @for (producto of r.productos_mas_vendidos; track producto.product_name) {
+            <div class="flex items-center justify-between py-2 text-sm">
+              <span class="text-hg-charcoal">{{ producto.product_name }}</span>
+              <span class="font-medium text-hg-charcoal">{{ producto.cantidad }} unidades</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</section>
