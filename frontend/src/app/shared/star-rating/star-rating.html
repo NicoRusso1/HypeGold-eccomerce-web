@@ -1,0 +1,20 @@
+<span class="inline-flex items-center gap-0.5" [attr.aria-label]="rating() + ' de 5 estrellas'">
+  @for (llena of estrellas(); track $index) {
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      [attr.fill]="llena ? 'currentColor' : 'none'"
+      stroke="currentColor"
+      stroke-width="1.5"
+      class="h-4 w-4"
+      [class.text-gold-500]="llena"
+      [class.text-gold-200]="!llena"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m11.48 3.499 2.063 4.182 4.615.671-3.34 3.255.789 4.597L11.48 14.06l-4.127 2.17.789-4.597-3.34-3.255 4.615-.671 2.063-4.182Z"
+      />
+    </svg>
+  }
+</span>

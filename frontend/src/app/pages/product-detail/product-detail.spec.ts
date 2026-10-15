@@ -29,6 +29,12 @@ describe('ProductDetailPage', () => {
         { id: 1, talle: '45cm', sku: 'SKU-1', stock: 10, price: 45000 },
         { id: 2, talle: '50cm', sku: 'SKU-2', stock: 0, price: 47000 },
       ],
+      average_rating: 4.5,
+      reviews_count: 2,
+      reviews: [
+        { id: 1, author_name: 'Marcela G.', rating: 5, comment: 'Hermosa.', created_at: '2026-10-01T00:00:00Z' },
+        { id: 2, author_name: 'Juan P.', rating: 4, comment: null, created_at: '2026-10-02T00:00:00Z' },
+      ],
     },
   };
 
