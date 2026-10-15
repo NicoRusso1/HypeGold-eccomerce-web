@@ -7,10 +7,10 @@
       role="alertdialog"
       aria-modal="true"
       [attr.aria-label]="dialog.title"
-      class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
+      class="w-full max-w-sm rounded-2xl bg-surface p-6 shadow-xl"
       (click)="$event.stopPropagation()"
     >
-      <h2 class="font-display text-lg font-semibold text-hg-black">{{ dialog.title }}</h2>
+      <h2 class="font-display uppercase tracking-wide text-lg font-semibold text-hg-black">{{ dialog.title }}</h2>
       <p class="mt-2 text-sm text-hg-charcoal/70">{{ dialog.message }}</p>
 
       <div class="mt-6 flex justify-end gap-3">

@@ -1,5 +1,5 @@
 <section class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-  <h1 class="font-display text-3xl font-semibold text-hg-black">Mi carrito</h1>
+  <h1 class="font-display uppercase tracking-wide text-3xl font-semibold text-hg-black">Mi carrito</h1>
 
   @if (loading()) {
     <p class="mt-10 text-center text-hg-charcoal/60">Cargando carrito...</p>
@@ -20,7 +20,7 @@
   } @else {
     @let cart = cartService.cart()!;
 
-    <div class="mt-8 divide-y divide-gold-200/60 rounded-2xl border border-gold-200/60 bg-white">
+    <div class="mt-8 divide-y divide-gold-200/60 rounded-2xl border border-gold-200/60 bg-surface">
       @for (item of cart.items; track item.id) {
         <div class="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
           <a [routerLink]="['/producto', item.product.slug]" class="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gold-50">
@@ -83,7 +83,7 @@
     </div>
 
     <div class="mt-6 flex flex-col items-end gap-2">
-      <p class="font-display text-2xl font-semibold text-hg-black">
+      <p class="font-display uppercase tracking-wide text-2xl font-semibold text-hg-black">
         Total: {{ cart.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
       </p>
       <div class="flex gap-3">
@@ -96,7 +96,7 @@
         </button>
         <a
           routerLink="/checkout"
-          class="rounded-full bg-gold-500 px-6 py-2 text-sm font-semibold text-hg-black transition hover:bg-gold-400"
+          class="rounded-full bg-gold-500 px-6 py-2 text-sm font-semibold text-black transition hover:bg-gold-400"
         >
           Finalizar compra
         </a>

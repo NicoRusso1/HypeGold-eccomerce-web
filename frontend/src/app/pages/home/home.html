@@ -1,38 +1,68 @@
-<!-- Banner principal -->
-<section class="relative overflow-hidden bg-hg-black text-hg-ivory">
-  <div class="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-20 text-center sm:px-6">
-    <img src="assets/logo-isotipo.webp" alt="HypeGold" class="h-16 w-16" />
-    <h1 class="font-display text-4xl font-semibold sm:text-5xl">
-      Joyas con <span class="text-gold-400">carácter propio</span>
+<!-- Hero -->
+<section class="relative overflow-hidden">
+  <img
+    src="assets/hero/hero-cadenas.jpg"
+    alt=""
+    aria-hidden="true"
+    class="absolute inset-0 h-full w-full object-cover brightness-[0.4]"
+  />
+  <div class="absolute inset-0 bg-linear-to-r from-hg-ivory via-hg-ivory/70 to-hg-ivory/15"></div>
+  <div class="relative mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 py-24 sm:px-6 sm:py-32">
+    <span class="inline-flex items-center gap-2 rounded-full border-2 border-gold-400 bg-surface px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gold-400">
+      ✦ Oro enchapado 18k
+    </span>
+    <h1 class="display max-w-2xl text-5xl leading-[0.95] text-hg-black sm:text-7xl">
+      Oro que <span class="text-gold-400">se hace notar</span>
     </h1>
-    <p class="max-w-xl text-hg-ivory/70">
+    <p class="max-w-md text-lg text-hg-charcoal">
       Piezas de HypeGold Joyas, pensadas en Concordia y hechas para acompañarte todos los días.
     </p>
     <a
       routerLink="/catalogo"
-      class="mt-2 rounded-full bg-gold-500 px-8 py-3 text-sm font-semibold text-hg-black transition hover:bg-gold-400"
+      class="mt-2 rounded-full border-[3px] border-hg-ivory bg-gold-400 px-8 py-3 text-sm font-bold uppercase tracking-wide text-black shadow-[6px_6px_0_var(--color-hg-black)] transition hover:bg-gold-500"
     >
       Ver catálogo
     </a>
   </div>
 </section>
 
+<!-- Cinta -->
+<div class="overflow-hidden border-y-2 border-hg-ivory bg-gold-400 py-2.5">
+  <div class="marquee flex gap-12 whitespace-nowrap text-xs font-bold uppercase tracking-widest text-black">
+    @for (i of [0, 1]; track i) {
+      <span>Envíos a todo el país</span><span>·</span>
+      <span>Pago con Mercado Pago</span><span>·</span>
+      <span>Oro enchapado 18k</span><span>·</span>
+      <span>Concordia, Entre Ríos</span><span>·</span>
+      <span>Envíos a todo el país</span><span>·</span>
+      <span>Pago con Mercado Pago</span><span>·</span>
+      <span>Oro enchapado 18k</span><span>·</span>
+      <span>Concordia, Entre Ríos</span><span>·</span>
+    }
+  </div>
+</div>
+
 <!-- Categorías -->
 @if (categoriasLoading()) {
   <p class="py-10 text-center text-hg-charcoal/60">Cargando categorías...</p>
 } @else if (categoriasError()) {
-  <p class="py-10 text-center text-red-500">No pudimos cargar las categorías. Probá de nuevo en un momento.</p>
+  <p class="py-10 text-center text-red-400">No pudimos cargar las categorías. Probá de nuevo en un momento.</p>
 } @else if (categorias().length > 0) {
   <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-    <h2 class="font-display text-2xl font-semibold text-hg-black">Categorías</h2>
-    <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+    <h2 class="display text-3xl text-hg-black">Categorías</h2>
+    <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
       @for (categoria of categorias(); track categoria.id) {
         <a
           [routerLink]="['/catalogo', categoria.slug]"
-          class="group flex flex-col items-center gap-3 rounded-2xl border border-gold-200/60 bg-white p-6 text-center transition hover:border-gold-400 hover:shadow-lg"
+          class="group relative flex min-h-[220px] items-end overflow-hidden rounded-2xl border border-gold-200/60 p-8"
         >
-          <span class="text-3xl">{{ iconoDe(categoria) }}</span>
-          <span class="font-medium text-hg-charcoal group-hover:text-gold-600">{{ categoria.name }}</span>
+          @if (fotoDe(categoria); as foto) {
+            <img [src]="foto" alt="" aria-hidden="true" class="absolute inset-0 h-full w-full scale-110 object-cover brightness-[0.45] blur-[3px] transition group-hover:scale-125" />
+          } @else {
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_var(--color-gold-100)_0%,_var(--color-surface)_70%)]"></div>
+          }
+          <div class="absolute inset-0 bg-linear-to-t from-hg-ivory via-hg-ivory/10 to-transparent"></div>
+          <span class="display relative text-3xl text-hg-black">{{ categoria.name }}</span>
         </a>
       }
     </div>
@@ -43,20 +73,33 @@
 @if (destacadosLoading()) {
   <p class="py-10 text-center text-hg-charcoal/60">Cargando destacados...</p>
 } @else if (destacadosError()) {
-  <p class="py-10 text-center text-red-500">No pudimos cargar los destacados. Probá de nuevo en un momento.</p>
+  <p class="py-10 text-center text-red-400">No pudimos cargar los destacados. Probá de nuevo en un momento.</p>
 } @else if (destacados().length > 0) {
-  <section class="bg-gold-50/60 py-16">
-    <div class="mx-auto max-w-6xl px-4 sm:px-6">
-      <div class="flex items-end justify-between">
-        <h2 class="font-display text-2xl font-semibold text-hg-black">Destacados</h2>
-        <a routerLink="/catalogo" class="text-sm font-medium text-gold-600 hover:text-gold-700">Ver todo →</a>
-      </div>
+  <section class="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+    <div class="flex items-end justify-between">
+      <h2 class="display text-3xl text-hg-black">Destacados</h2>
+      <a routerLink="/catalogo" class="text-sm font-semibold uppercase tracking-wide text-gold-400 hover:text-gold-300">Ver todo →</a>
+    </div>
 
-      <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        @for (producto of destacados(); track producto.id) {
-          <app-product-card [product]="producto" />
-        }
-      </div>
+    <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (producto of destacados(); track producto.id) {
+        <app-product-card [product]="producto" />
+      }
     </div>
   </section>
 }
+
+<!-- Banner final -->
+<section class="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+  <div class="flex flex-wrap items-center justify-between gap-6 rounded-3xl bg-gold-400 p-10 sm:p-14">
+    <p class="display max-w-lg text-3xl leading-[0.95] text-black sm:text-4xl">
+      ¿Listo para sumar brillo a tu estilo?
+    </p>
+    <a
+      routerLink="/catalogo"
+      class="rounded-full bg-black px-8 py-3 text-sm font-bold uppercase tracking-wide text-white transition hover:bg-hg-charcoal/20"
+    >
+      Ver catálogo completo
+    </a>
+  </div>
+</section>

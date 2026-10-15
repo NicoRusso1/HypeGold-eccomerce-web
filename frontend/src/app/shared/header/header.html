@@ -1,4 +1,4 @@
-<header class="sticky top-0 z-50 border-b border-gold-200/60 bg-hg-ivory/95 backdrop-blur">
+<header class="sticky top-0 z-50 border-b-2 border-gold-400/30 bg-hg-ivory/95 backdrop-blur">
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
     <a routerLink="/" class="flex items-center gap-2">
       <img
@@ -6,7 +6,7 @@
         alt="HypeGold"
         class="h-10 w-10"
       />
-      <span class="font-display text-lg font-semibold tracking-wide text-hg-black">
+      <span class="font-display uppercase tracking-wide text-lg text-hg-black">
         Hype<span class="text-gold-600">Gold</span>
       </span>
     </a>
@@ -83,10 +83,51 @@
           Ingresar
         </a>
       }
+
+      <button
+        type="button"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="menuAbierto()"
+        aria-label="Abrir menú"
+        class="rounded-full p-2 text-hg-charcoal transition hover:bg-gold-50 hover:text-gold-600 lg:hidden"
+      >
+        @if (menuAbierto()) {
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-6 w-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-6 w-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+          </svg>
+        }
+      </button>
     </div>
   </div>
 
   <div class="border-t border-gold-200/60 px-4 py-2 sm:hidden">
     <app-search-box [categories]="categories()" />
   </div>
+
+  @if (menuAbierto()) {
+    <nav class="border-t border-gold-200/60 bg-hg-ivory px-4 py-4 lg:hidden">
+      <div class="flex flex-col gap-1 text-sm font-medium text-hg-charcoal">
+        <a routerLink="/" (click)="cerrarMenu()" class="rounded-lg px-3 py-2 transition hover:bg-gold-50 hover:text-gold-600">Inicio</a>
+        <a routerLink="/catalogo" (click)="cerrarMenu()" class="rounded-lg px-3 py-2 transition hover:bg-gold-50 hover:text-gold-600">Catálogo</a>
+        @for (categoria of categories(); track categoria.id) {
+          <a [routerLink]="['/catalogo', categoria.slug]" (click)="cerrarMenu()" class="rounded-lg px-3 py-2 transition hover:bg-gold-50 hover:text-gold-600">
+            {{ categoria.name }}
+          </a>
+        }
+        @if (authService.isLoggedIn()) {
+          <a routerLink="/favoritos" (click)="cerrarMenu()" class="rounded-lg px-3 py-2 transition hover:bg-gold-50 hover:text-gold-600">Favoritos</a>
+          <a routerLink="/cuenta/perfil" (click)="cerrarMenu()" class="rounded-lg px-3 py-2 transition hover:bg-gold-50 hover:text-gold-600">
+            Hola, {{ authService.currentUser()?.name?.split(' ')?.[0] }}
+          </a>
+          @if (authService.currentUser()?.role === 'administrador') {
+            <a routerLink="/admin/ventas" (click)="cerrarMenu()" class="rounded-lg px-3 py-2 text-gold-600 transition hover:bg-gold-50">Panel admin</a>
+          }
+        }
+      </div>
+    </nav>
+  }
 </header>

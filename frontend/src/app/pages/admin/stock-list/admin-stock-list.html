@@ -2,7 +2,7 @@
 
 <section class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
   <div class="flex flex-wrap items-center justify-between gap-4">
-    <h1 class="font-display text-3xl font-semibold text-hg-black">Stock</h1>
+    <h1 class="font-display uppercase tracking-wide text-3xl font-semibold text-hg-black">Stock</h1>
 
     @if (meta(); as m) {
       @if (m.low_stock_count > 0) {
@@ -21,7 +21,7 @@
       {{ soloStockBajo() ? 'No hay variantes con stock bajo.' : 'Todavía no hay variantes cargadas.' }}
     </p>
   } @else {
-    <div class="mt-8 overflow-hidden rounded-2xl border border-gold-200/60 bg-white">
+    <div class="mt-8 overflow-hidden rounded-2xl border border-gold-200/60 bg-surface">
       <div class="overflow-x-auto">
       <table class="w-full min-w-[560px] text-left text-sm">
         <thead class="bg-gold-50 text-xs font-semibold uppercase tracking-wide text-hg-charcoal/70">
