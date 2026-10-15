@@ -8,6 +8,7 @@ use App\Http\Resources\OrderResource;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\ProductVariant;
+use App\Notifications\OrderCreatedNotification;
 use App\Services\MercadoPagoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -162,6 +163,8 @@ class OrderController extends Controller
         });
 
         $order->load(['items', 'user']);
+
+        $order->user->notify(new OrderCreatedNotification($order));
 
         // La preferencia de Mercado Pago se crea fuera de la transacción: es una
         // llamada de red y no debe mantener bloqueadas las filas de stock/cupón.
