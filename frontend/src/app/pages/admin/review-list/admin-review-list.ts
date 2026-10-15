@@ -5,6 +5,7 @@ import { AdminProduct } from '../../../core/models/admin-product.model';
 import { AdminReview } from '../../../core/models/admin-review.model';
 import { AdminProductService } from '../../../core/services/admin-product.service';
 import { AdminReviewService } from '../../../core/services/admin-review.service';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 import { AdminNav } from '../../../shared/admin-nav/admin-nav';
 import { StarRating } from '../../../shared/star-rating/star-rating';
 
@@ -22,6 +23,7 @@ export class AdminReviewListPage {
   private readonly fb = inject(FormBuilder);
   private readonly reviewService = inject(AdminReviewService);
   private readonly productService = inject(AdminProductService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly productos = signal<AdminProduct[]>([]);
   protected readonly reviews = signal<AdminReview[]>([]);
@@ -102,7 +104,16 @@ export class AdminReviewListPage {
     });
   }
 
-  protected eliminar(review: AdminReview): void {
+  protected async eliminar(review: AdminReview): Promise<void> {
+    const confirmado = await this.confirmDialog.confirm({
+      title: 'Eliminar reseña',
+      message: `¿Seguro que querés eliminar la reseña de "${review.author_name}"? Esta acción no se puede deshacer.`,
+    });
+
+    if (!confirmado) {
+      return;
+    }
+
     this.reviewService.deleteReview(review.id).subscribe(() => this.cargarReviews());
   }
 

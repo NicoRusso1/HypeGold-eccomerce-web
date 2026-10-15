@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service';
 import { CartPage } from './cart';
 
 describe('CartPage', () => {
@@ -80,15 +81,30 @@ describe('CartPage', () => {
     expect(component['errorPorItem']()[10]).toBe('No hay stock suficiente. Disponible: 12.');
   });
 
-  it('permite vaciar el carrito', () => {
+  it('permite vaciar el carrito tras confirmar', async () => {
     const getReq = httpMock.expectOne((r) => r.url.endsWith('/cart') && r.method === 'GET');
     getReq.flush(cartConItems);
 
-    component['vaciarCarrito']();
+    const confirmDialog = TestBed.inject(ConfirmDialogService);
+    const promesa = component['vaciarCarrito']();
+    confirmDialog.resolve(true);
+    await promesa;
 
     const deleteReq = httpMock.expectOne((r) => r.url.endsWith('/cart') && r.method === 'DELETE');
     deleteReq.flush({ data: { id: 1, items: [], items_count: 0, total: 0 } });
 
     expect(component['cartService'].cart()?.items).toHaveLength(0);
+  });
+
+  it('no vacia el carrito si se cancela la confirmacion', async () => {
+    const getReq = httpMock.expectOne((r) => r.url.endsWith('/cart') && r.method === 'GET');
+    getReq.flush(cartConItems);
+
+    const confirmDialog = TestBed.inject(ConfirmDialogService);
+    const promesa = component['vaciarCarrito']();
+    confirmDialog.resolve(false);
+    await promesa;
+
+    httpMock.expectNone((r) => r.method === 'DELETE');
   });
 });

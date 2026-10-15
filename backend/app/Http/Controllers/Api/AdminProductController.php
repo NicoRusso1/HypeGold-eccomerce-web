@@ -121,6 +121,27 @@ class AdminProductController extends Controller
     }
 
     /**
+     * Elimina un producto (y en cascada sus variantes, imágenes y reseñas).
+     * El historial de pedidos no se ve afectado: los items de pedido guardan
+     * su propia copia de nombre/sku y no dependen de que el producto siga
+     * existiendo.
+     */
+    #[OA\Delete(
+        path: '/admin/products/{product}',
+        summary: 'Eliminar un producto (admin)',
+        tags: ['Administración'],
+        security: [['sanctum' => []]],
+        parameters: [new OA\Parameter(name: 'product', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [new OA\Response(response: 204, description: 'Producto eliminado')],
+    )]
+    public function destroy(Product $product)
+    {
+        $product->delete();
+
+        return response()->noContent();
+    }
+
+    /**
      * Sube una imagen para el producto.
      */
     #[OA\Post(

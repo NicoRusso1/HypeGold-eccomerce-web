@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service';
 import { AddressesPage } from './addresses';
 
 describe('AddressesPage', () => {
@@ -79,14 +80,29 @@ describe('AddressesPage', () => {
     expect(component['addresses']()).toHaveLength(1);
   });
 
-  it('elimina una direccion', () => {
+  it('elimina una direccion tras confirmar', async () => {
     httpMock.expectOne((r) => r.url.endsWith('/addresses') && r.method === 'GET').flush({ data: [direccion] });
 
-    component['eliminar'](direccion);
+    const confirmDialog = TestBed.inject(ConfirmDialogService);
+    const promesa = component['eliminar'](direccion);
+    confirmDialog.resolve(true);
+    await promesa;
 
     httpMock.expectOne((r) => r.url.endsWith('/addresses/1') && r.method === 'DELETE').flush(null);
     httpMock.expectOne((r) => r.url.endsWith('/addresses') && r.method === 'GET').flush({ data: [] });
 
     expect(component['addresses']()).toHaveLength(0);
+  });
+
+  it('no elimina la direccion si se cancela la confirmacion', async () => {
+    httpMock.expectOne((r) => r.url.endsWith('/addresses') && r.method === 'GET').flush({ data: [direccion] });
+
+    const confirmDialog = TestBed.inject(ConfirmDialogService);
+    const promesa = component['eliminar'](direccion);
+    confirmDialog.resolve(false);
+    await promesa;
+
+    httpMock.expectNone((r) => r.method === 'DELETE');
+    expect(component['addresses']()).toHaveLength(1);
   });
 });
