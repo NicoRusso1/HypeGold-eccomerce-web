@@ -2,9 +2,9 @@
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
     <a routerLink="/" class="flex items-center gap-2">
       <img
-        src="assets/logo-isotipo.webp"
+        src="assets/logo-isotipo-cropped.png"
         alt="HypeGold"
-        class="h-10 w-10"
+        class="h-7 w-7 object-contain"
       />
       <span class="font-display uppercase tracking-wide text-lg text-hg-black">
         Hype<span class="text-gold-600">Gold</span>
@@ -13,12 +13,26 @@
 
     <nav class="hidden items-center gap-6 text-sm font-medium text-hg-charcoal lg:flex">
       <a routerLink="/" class="transition hover:text-gold-600">Inicio</a>
-      <a routerLink="/catalogo" class="transition hover:text-gold-600">Catálogo</a>
-      @for (categoria of categories(); track categoria.id) {
-        <a [routerLink]="['/catalogo', categoria.slug]" class="transition hover:text-gold-600">
-          {{ categoria.name }}
+      <div class="group relative">
+        <a routerLink="/catalogo" class="flex items-center gap-1 transition hover:text-gold-600">
+          Catálogo
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 transition group-hover:rotate-180">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+          </svg>
         </a>
-      }
+        @if (categories().length > 0) {
+          <div class="invisible absolute left-0 top-full z-20 w-56 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+            <div class="rounded-xl border border-gold-200/60 bg-surface p-2 shadow-lg">
+              <p class="px-3 py-1 text-xs font-semibold uppercase tracking-wide text-hg-charcoal/50">Productos</p>
+              @for (categoria of categories(); track categoria.id) {
+                <a [routerLink]="['/catalogo', categoria.slug]" class="block rounded-lg px-3 py-2 text-sm text-hg-charcoal transition hover:bg-gold-50 hover:text-gold-600">
+                  {{ categoria.name }}
+                </a>
+              }
+            </div>
+          </div>
+        }
+      </div>
     </nav>
 
     <div class="hidden sm:block">
@@ -113,10 +127,15 @@
       <div class="flex flex-col gap-1 text-sm font-medium text-hg-charcoal">
         <a routerLink="/" (click)="cerrarMenu()" class="rounded-lg px-3 py-2 transition hover:bg-gold-50 hover:text-gold-600">Inicio</a>
         <a routerLink="/catalogo" (click)="cerrarMenu()" class="rounded-lg px-3 py-2 transition hover:bg-gold-50 hover:text-gold-600">Catálogo</a>
-        @for (categoria of categories(); track categoria.id) {
-          <a [routerLink]="['/catalogo', categoria.slug]" (click)="cerrarMenu()" class="rounded-lg px-3 py-2 transition hover:bg-gold-50 hover:text-gold-600">
-            {{ categoria.name }}
-          </a>
+        @if (categories().length > 0) {
+          <div class="ml-3 flex flex-col gap-1 border-l border-gold-200/60 pl-3">
+            <span class="px-3 py-1 text-xs font-semibold uppercase tracking-wide text-hg-charcoal/50">Productos</span>
+            @for (categoria of categories(); track categoria.id) {
+              <a [routerLink]="['/catalogo', categoria.slug]" (click)="cerrarMenu()" class="rounded-lg px-3 py-2 text-sm transition hover:bg-gold-50 hover:text-gold-600">
+                {{ categoria.name }}
+              </a>
+            }
+          </div>
         }
         @if (authService.isLoggedIn()) {
           <a routerLink="/favoritos" (click)="cerrarMenu()" class="rounded-lg px-3 py-2 transition hover:bg-gold-50 hover:text-gold-600">Favoritos</a>
