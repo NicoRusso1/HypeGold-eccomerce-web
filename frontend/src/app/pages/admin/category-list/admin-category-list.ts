@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, computed, inject, signal } from '@angular/core';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Category } from '../../../core/models/category.model';
 import { AdminCategoryService } from '../../../core/services/admin-category.service';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
@@ -11,7 +11,7 @@ interface ValidationErrors {
 }
 
 @Component({
-  imports: [ReactiveFormsModule, AdminNav],
+  imports: [ReactiveFormsModule, FormsModule, AdminNav],
   selector: 'app-admin-category-list',
   styleUrl: './admin-category-list.css',
   templateUrl: './admin-category-list.html',
@@ -27,6 +27,17 @@ export class AdminCategoryListPage {
   protected readonly errors = signal<ValidationErrors>({});
   protected readonly editingId = signal<number | null>(null);
   protected readonly deleteError = signal<string | null>(null);
+  protected readonly busqueda = signal('');
+
+  protected readonly categoriesVisibles = computed(() => {
+    const termino = this.busqueda().trim().toLowerCase();
+
+    if (!termino) {
+      return this.categories();
+    }
+
+    return this.categories().filter((categoria) => categoria.name.toLowerCase().includes(termino));
+  });
 
   protected readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(255)]],

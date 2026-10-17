@@ -24,6 +24,7 @@ export class AdminOrderListPage {
   protected readonly loading = signal(true);
   protected readonly meta = signal<PaginatedResponse<AdminOrder>['meta'] | null>(null);
   protected readonly estadoFiltro = signal<string>('');
+  protected readonly busqueda = signal('');
 
   private page = 1;
 
@@ -37,6 +38,11 @@ export class AdminOrderListPage {
     this.cargar();
   }
 
+  protected buscar(): void {
+    this.page = 1;
+    this.cargar();
+  }
+
   protected irAPagina(pagina: number): void {
     this.page = pagina;
     this.cargar();
@@ -45,7 +51,7 @@ export class AdminOrderListPage {
   private cargar(): void {
     this.loading.set(true);
 
-    this.orderService.getOrders(this.page, this.estadoFiltro() || undefined).subscribe({
+    this.orderService.getOrders(this.page, this.estadoFiltro() || undefined, this.busqueda() || undefined).subscribe({
       next: (response) => {
         this.orders.set(response.data);
         this.meta.set(response.meta);

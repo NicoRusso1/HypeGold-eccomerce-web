@@ -70,6 +70,22 @@ describe('AdminStockListPage', () => {
     expect(component['itemsVisibles'][0].sku).toBe('SKU-1');
   });
 
+  it('filtra las variantes por producto o sku', () => {
+    flushStock();
+
+    expect(component['itemsVisibles']).toHaveLength(2);
+
+    component['busqueda'].set('anillo');
+
+    expect(component['itemsVisibles']).toHaveLength(1);
+    expect(component['itemsVisibles'][0].sku).toBe('SKU-2');
+
+    component['busqueda'].set('SKU-1');
+
+    expect(component['itemsVisibles']).toHaveLength(1);
+    expect(component['itemsVisibles'][0].sku).toBe('SKU-1');
+  });
+
   it('guarda el nuevo stock de una variante', () => {
     flushStock();
 

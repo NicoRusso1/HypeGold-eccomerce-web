@@ -91,6 +91,21 @@ describe('AdminProductListPage', () => {
     expect(component['products']()).toHaveLength(0);
   });
 
+  it('busca productos por nombre', () => {
+    httpMock.expectOne((r) => r.url.endsWith('/admin/products')).flush({
+      data: [],
+      meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 },
+    });
+
+    component['busqueda'].set('cubana');
+    component['buscar']();
+
+    const req = httpMock.expectOne((r) => r.url.includes('/admin/products') && r.params.get('search') === 'cubana');
+    req.flush({ data: [], meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 } });
+
+    expect(component['page']).toBe(1);
+  });
+
   it('no elimina el producto si se cancela la confirmacion', async () => {
     const producto = {
       id: 1,

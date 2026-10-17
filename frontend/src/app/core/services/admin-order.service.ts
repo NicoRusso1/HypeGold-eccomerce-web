@@ -10,11 +10,15 @@ export class AdminOrderService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/admin/orders`;
 
-  getOrders(page = 1, status?: string): Observable<PaginatedResponse<AdminOrder>> {
+  getOrders(page = 1, status?: string, search?: string): Observable<PaginatedResponse<AdminOrder>> {
     const params: Record<string, string | number> = { page };
 
     if (status) {
       params['status'] = status;
+    }
+
+    if (search) {
+      params['search'] = search;
     }
 
     return this.http.get<PaginatedResponse<AdminOrder>>(this.baseUrl, { params });

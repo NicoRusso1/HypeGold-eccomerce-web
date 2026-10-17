@@ -54,6 +54,19 @@ class AdminProductTest extends TestCase
         $this->assertCount(2, $response->json('data'));
     }
 
+    public function test_un_administrador_puede_buscar_productos_por_nombre(): void
+    {
+        Sanctum::actingAs(User::factory()->admin()->create());
+        Product::factory()->create(['name' => 'Cadena cubana']);
+        Product::factory()->create(['name' => 'Pulsera forcet']);
+
+        $response = $this->getJson('/api/admin/products?search=cubana');
+
+        $response->assertOk();
+        $this->assertCount(1, $response->json('data'));
+        $this->assertSame('Cadena cubana', $response->json('data.0.name'));
+    }
+
     public function test_un_administrador_puede_crear_un_producto_con_variantes(): void
     {
         Sanctum::actingAs(User::factory()->admin()->create());

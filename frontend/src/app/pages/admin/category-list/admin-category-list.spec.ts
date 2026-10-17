@@ -82,6 +82,20 @@ describe('AdminCategoryListPage', () => {
     expect(component['deleteError']()).toContain('No se puede eliminar');
   });
 
+  it('filtra las categorias por nombre', () => {
+    flushCategories([
+      { id: 1, name: 'Cadenas', slug: 'cadenas', description: null, products_count: 2 },
+      { id: 2, name: 'Pulseras', slug: 'pulseras', description: null, products_count: 1 },
+    ]);
+
+    expect(component['categoriesVisibles']()).toHaveLength(2);
+
+    component['busqueda'].set('cade');
+
+    expect(component['categoriesVisibles']()).toHaveLength(1);
+    expect(component['categoriesVisibles']()[0].name).toBe('Cadenas');
+  });
+
   it('no elimina la categoria si se cancela la confirmacion', async () => {
     flushCategories([{ id: 1, name: 'Cadenas', slug: 'cadenas', description: null, products_count: 0 }]);
 
