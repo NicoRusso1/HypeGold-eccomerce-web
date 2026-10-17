@@ -24,6 +24,7 @@ import { AdminDashboardPage } from './pages/admin/dashboard/admin-dashboard';
 import { AdminReviewListPage } from './pages/admin/review-list/admin-review-list';
 import { ReceiptPage } from './pages/receipt/receipt-page';
 import { AdminOrderReceiptPage } from './pages/admin/order-receipt/admin-order-receipt';
+import { NotFound } from './pages/not-found/not-found';
 import { LegalPage } from './pages/legal/legal-page';
 import { TERMINOS_Y_CONDICIONES } from './pages/legal/content/terminos-y-condiciones.content';
 import { POLITICA_DE_PRIVACIDAD } from './pages/legal/content/politica-de-privacidad.content';
@@ -162,4 +163,5 @@ export const routes: Routes = [
     title: 'Cambios y devoluciones · HypeGold',
     data: { content: POLITICA_DE_CAMBIOS },
   },
+  { path: '**', component: NotFound, title: 'Página no encontrada · HypeGold' },
 ];
