@@ -1,5 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AdminProduct } from '../../../core/models/admin-product.model';
 import { PaginatedResponse } from '../../../core/models/product.model';
@@ -8,7 +9,7 @@ import { ConfirmDialogService } from '../../../core/services/confirm-dialog.serv
 import { AdminNav } from '../../../shared/admin-nav/admin-nav';
 
 @Component({
-  imports: [CurrencyPipe, RouterLink, AdminNav],
+  imports: [CurrencyPipe, RouterLink, FormsModule, AdminNav],
   selector: 'app-admin-product-list',
   styleUrl: './admin-product-list.css',
   templateUrl: './admin-product-list.html',
@@ -21,10 +22,16 @@ export class AdminProductListPage {
   protected readonly loading = signal(true);
   protected readonly meta = signal<PaginatedResponse<AdminProduct>['meta'] | null>(null);
   protected readonly deleteError = signal<string | null>(null);
+  protected readonly busqueda = signal('');
 
   private page = 1;
 
   constructor() {
+    this.cargar();
+  }
+
+  protected buscar(): void {
+    this.page = 1;
     this.cargar();
   }
 
@@ -54,7 +61,7 @@ export class AdminProductListPage {
   private cargar(): void {
     this.loading.set(true);
 
-    this.productService.getProducts(this.page).subscribe({
+    this.productService.getProducts(this.page, this.busqueda() || undefined).subscribe({
       next: (response) => {
         this.products.set(response.data);
         this.meta.set(response.meta);

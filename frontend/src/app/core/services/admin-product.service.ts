@@ -10,8 +10,14 @@ export class AdminProductService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/admin/products`;
 
-  getProducts(page = 1): Observable<PaginatedResponse<AdminProduct>> {
-    return this.http.get<PaginatedResponse<AdminProduct>>(this.baseUrl, { params: { page } });
+  getProducts(page = 1, search?: string): Observable<PaginatedResponse<AdminProduct>> {
+    const params: Record<string, string | number> = { page };
+
+    if (search) {
+      params['search'] = search;
+    }
+
+    return this.http.get<PaginatedResponse<AdminProduct>>(this.baseUrl, { params });
   }
 
   getProduct(id: number): Observable<AdminProduct> {

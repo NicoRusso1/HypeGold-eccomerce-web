@@ -18,10 +18,23 @@ export class AdminStockListPage {
   protected readonly loading = signal(true);
   protected readonly soloStockBajo = signal(false);
   protected readonly savingId = signal<number | null>(null);
+  protected readonly busqueda = signal('');
   protected readonly editValues = new Map<number, number>();
 
   protected get itemsVisibles(): AdminStockItem[] {
-    return this.soloStockBajo() ? this.items().filter((item) => item.low_stock) : this.items();
+    const termino = this.busqueda().trim().toLowerCase();
+
+    return this.items().filter((item) => {
+      if (this.soloStockBajo() && !item.low_stock) {
+        return false;
+      }
+
+      if (!termino) {
+        return true;
+      }
+
+      return item.product.name.toLowerCase().includes(termino) || item.sku.toLowerCase().includes(termino);
+    });
   }
 
   constructor() {

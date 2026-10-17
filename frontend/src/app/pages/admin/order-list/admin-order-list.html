@@ -4,16 +4,35 @@
   <div class="flex flex-wrap items-center justify-between gap-4">
     <h1 class="font-display uppercase tracking-wide text-3xl font-semibold text-hg-black">Pedidos</h1>
 
-    <select
-      [ngModel]="estadoFiltro()"
-      (ngModelChange)="onCambioFiltro($event)"
-      class="rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
-    >
-      <option value="">Todos los estados</option>
-      @for (estado of estados; track estado) {
-        <option [value]="estado">{{ ordenStatusLabel(estado) }}</option>
-      }
-    </select>
+    <div class="flex flex-wrap gap-3">
+      <form (ngSubmit)="buscar()" class="flex gap-2">
+        <input
+          type="search"
+          [ngModel]="busqueda()"
+          (ngModelChange)="busqueda.set($event)"
+          name="busqueda"
+          placeholder="Buscar por N° o cliente..."
+          class="rounded-full border border-gold-200 px-4 py-2 text-sm focus:border-gold-400 focus:outline-none"
+        />
+        <button
+          type="submit"
+          class="rounded-full border border-gold-300 px-4 py-2 text-sm font-medium text-hg-black transition hover:border-gold-500 hover:text-gold-600"
+        >
+          Buscar
+        </button>
+      </form>
+
+      <select
+        [ngModel]="estadoFiltro()"
+        (ngModelChange)="onCambioFiltro($event)"
+        class="rounded-lg border border-gold-200 px-3 py-2 text-sm focus:border-gold-500 focus:outline-none"
+      >
+        <option value="">Todos los estados</option>
+        @for (estado of estados; track estado) {
+          <option [value]="estado">{{ ordenStatusLabel(estado) }}</option>
+        }
+      </select>
+    </div>
   </div>
 
   @if (loading()) {

@@ -1,7 +1,17 @@
 <app-admin-nav />
 
 <section class="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-  <h1 class="font-display uppercase tracking-wide text-3xl font-semibold text-hg-black">Categorías</h1>
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <h1 class="font-display uppercase tracking-wide text-3xl font-semibold text-hg-black">Categorías</h1>
+    <input
+      type="search"
+      [ngModel]="busqueda()"
+      (ngModelChange)="busqueda.set($event)"
+      [ngModelOptions]="{ standalone: true }"
+      placeholder="Buscar por nombre..."
+      class="w-full max-w-xs rounded-full border border-gold-200 px-4 py-2 text-sm focus:border-gold-400 focus:outline-none"
+    />
+  </div>
 
   <form [formGroup]="form" (ngSubmit)="guardar()" class="mt-8 space-y-4 rounded-2xl border border-gold-200/60 bg-surface p-6">
     <h2 class="font-display uppercase tracking-wide text-lg font-semibold text-hg-black">
@@ -59,8 +69,10 @@
 
   @if (loading()) {
     <p class="mt-10 text-center text-hg-charcoal/60">Cargando categorías...</p>
-  } @else if (categories().length === 0) {
-    <p class="mt-10 text-center text-hg-charcoal/60">Todavía no hay categorías cargadas.</p>
+  } @else if (categoriesVisibles().length === 0) {
+    <p class="mt-10 text-center text-hg-charcoal/60">
+      {{ busqueda() ? 'No encontramos categorías con ese nombre.' : 'Todavía no hay categorías cargadas.' }}
+    </p>
   } @else {
     <div class="mt-8 overflow-hidden rounded-2xl border border-gold-200/60 bg-surface">
       <div class="overflow-x-auto">
@@ -73,7 +85,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gold-200/60">
-          @for (category of categories(); track category.id) {
+          @for (category of categoriesVisibles(); track category.id) {
             <tr>
               <td class="px-4 py-3 font-medium text-hg-charcoal">{{ category.name }}</td>
               <td class="px-4 py-3 text-hg-charcoal/70">{{ category.products_count }}</td>

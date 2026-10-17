@@ -62,4 +62,19 @@ describe('AdminOrderListPage', () => {
 
     expect(component['estadoFiltro']()).toBe('pagado');
   });
+
+  it('busca pedidos por numero o cliente', () => {
+    httpMock.expectOne((r) => r.url.endsWith('/admin/orders')).flush({
+      data: [],
+      meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 },
+    });
+
+    component['busqueda'].set('juana');
+    component['buscar']();
+
+    const req = httpMock.expectOne((r) => r.url.includes('/admin/orders') && r.params.get('search') === 'juana');
+    req.flush({ data: [], meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 } });
+
+    expect(component['busqueda']()).toBe('juana');
+  });
 });

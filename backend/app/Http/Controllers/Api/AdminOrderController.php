@@ -21,7 +21,10 @@ class AdminOrderController extends Controller
         summary: 'Listar pedidos (admin)',
         tags: ['Administración'],
         security: [['sanctum' => []]],
-        parameters: [new OA\Parameter(name: 'status', in: 'query', required: false, schema: new OA\Schema(type: 'string'))],
+        parameters: [
+            new OA\Parameter(name: 'status', in: 'query', required: false, schema: new OA\Schema(type: 'string')),
+            new OA\Parameter(name: 'search', in: 'query', required: false, schema: new OA\Schema(type: 'string')),
+        ],
         responses: [new OA\Response(response: 200, description: 'Listado paginado de pedidos')],
     )]
     public function index(Request $request)
@@ -30,8 +33,18 @@ class AdminOrderController extends Controller
             ->with('user')
             ->withCount('items')
             ->when($request->query('status'), fn ($query, $status) => $query->where('status', $status))
+            ->when($request->query('search'), function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('id', 'like', $search.'%')
+                        ->orWhereHas('user', function ($q2) use ($search) {
+                            $q2->where('name', 'like', '%'.$search.'%')
+                                ->orWhere('email', 'like', '%'.$search.'%');
+                        });
+                });
+            })
             ->latest()
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         return AdminOrderResource::collection($orders);
     }

@@ -50,6 +50,33 @@ class AdminOrderTest extends TestCase
         $this->assertSame('pagado', $response->json('data.0.status'));
     }
 
+    public function test_un_administrador_puede_buscar_pedidos_por_numero(): void
+    {
+        Sanctum::actingAs(User::factory()->admin()->create());
+        $buscado = Order::factory()->create();
+        Order::factory()->create();
+
+        $response = $this->getJson('/api/admin/orders?search='.$buscado->id);
+
+        $response->assertOk();
+        $this->assertCount(1, $response->json('data'));
+        $this->assertSame($buscado->id, $response->json('data.0.id'));
+    }
+
+    public function test_un_administrador_puede_buscar_pedidos_por_cliente(): void
+    {
+        Sanctum::actingAs(User::factory()->admin()->create());
+        $cliente = User::factory()->create(['name' => 'Juana Pérez', 'email' => 'juana@hypegold.com']);
+        Order::factory()->create(['user_id' => $cliente->id]);
+        Order::factory()->create();
+
+        $response = $this->getJson('/api/admin/orders?search=juana');
+
+        $response->assertOk();
+        $this->assertCount(1, $response->json('data'));
+        $this->assertSame('Juana Pérez', $response->json('data.0.customer.name'));
+    }
+
     public function test_un_administrador_puede_ver_el_detalle_de_un_pedido_con_datos_del_cliente(): void
     {
         Sanctum::actingAs(User::factory()->admin()->create());

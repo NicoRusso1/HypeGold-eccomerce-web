@@ -8,6 +8,7 @@ use App\Http\Requests\Api\Admin\ProductRequest;
 use App\Http\Resources\AdminProductResource;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -24,15 +25,21 @@ class AdminProductController extends Controller
         summary: 'Listar productos (admin)',
         tags: ['Administración'],
         security: [['sanctum' => []]],
+        parameters: [new OA\Parameter(name: 'search', in: 'query', required: false, schema: new OA\Schema(type: 'string'))],
         responses: [new OA\Response(response: 200, description: 'Listado de productos')],
     )]
-    public function index()
+    public function index(Request $request)
     {
         $products = Product::query()
             ->with(['category', 'images'])
             ->withCount('variants')
+            ->when(
+                $request->query('search'),
+                fn ($query, $search) => $query->where('name', 'like', '%'.$search.'%'),
+            )
             ->orderByDesc('id')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         return AdminProductResource::collection($products);
     }
