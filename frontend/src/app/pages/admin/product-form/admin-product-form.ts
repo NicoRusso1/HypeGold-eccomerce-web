@@ -145,6 +145,9 @@ export class AdminProductFormPage {
         if (!id) {
           // Recién creado: vamos a su pantalla de edición para poder cargar fotos.
           this.router.navigate(['/admin/productos', product.id, 'editar']);
+        } else {
+          // Edición de un producto existente: volvemos al listado.
+          this.router.navigate(['/admin/productos']);
         }
       },
       error: (error: HttpErrorResponse) => {

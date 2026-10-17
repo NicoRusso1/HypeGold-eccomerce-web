@@ -135,6 +135,24 @@ describe('AdminProductFormPage', () => {
       expect(component['loading']()).toBe(false);
     });
 
+    it('al guardar los cambios vuelve al listado de productos', () => {
+      flushCategories();
+      httpMock.expectOne((r) => r.url.endsWith('/admin/products/5')).flush({
+        data: { id: 5, name: 'X', slug: 'x', material: 'Oro 18k', base_price: 1000, active: true, category: null, variants: [{ id: 11, talle: null, sku: 'SKU-A', stock: 5, extra_price: 0 }], images: [] },
+      });
+
+      const router = TestBed.inject(Router);
+      const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+      component['form'].patchValue({ category_id: 1, name: 'X editado' });
+      component['guardar']();
+
+      const req = httpMock.expectOne((r) => r.url.endsWith('/admin/products/5') && r.method === 'PUT');
+      req.flush({ data: { id: 5, name: 'X editado', slug: 'x', active: true, category: null } });
+
+      expect(navigateSpy).toHaveBeenCalledWith(['/admin/productos']);
+    });
+
     it('sube una imagen nueva', () => {
       flushCategories();
       httpMock.expectOne((r) => r.url.endsWith('/admin/products/5')).flush({
