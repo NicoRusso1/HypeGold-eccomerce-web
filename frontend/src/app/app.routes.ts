@@ -24,6 +24,10 @@ import { AdminDashboardPage } from './pages/admin/dashboard/admin-dashboard';
 import { AdminReviewListPage } from './pages/admin/review-list/admin-review-list';
 import { ReceiptPage } from './pages/receipt/receipt-page';
 import { AdminOrderReceiptPage } from './pages/admin/order-receipt/admin-order-receipt';
+import { LegalPage } from './pages/legal/legal-page';
+import { TERMINOS_Y_CONDICIONES } from './pages/legal/content/terminos-y-condiciones.content';
+import { POLITICA_DE_PRIVACIDAD } from './pages/legal/content/politica-de-privacidad.content';
+import { POLITICA_DE_CAMBIOS } from './pages/legal/content/politica-de-cambios.content';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 
@@ -139,5 +143,23 @@ export const routes: Routes = [
     component: AdminReviewListPage,
     title: 'Reseñas · Admin HypeGold',
     canActivate: [adminGuard],
+  },
+  {
+    path: 'terminos-y-condiciones',
+    component: LegalPage,
+    title: 'Términos y condiciones · HypeGold',
+    data: { content: TERMINOS_Y_CONDICIONES },
+  },
+  {
+    path: 'politica-de-privacidad',
+    component: LegalPage,
+    title: 'Política de privacidad · HypeGold',
+    data: { content: POLITICA_DE_PRIVACIDAD },
+  },
+  {
+    path: 'politica-de-cambios',
+    component: LegalPage,
+    title: 'Cambios y devoluciones · HypeGold',
+    data: { content: POLITICA_DE_CAMBIOS },
   },
 ];
