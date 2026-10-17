@@ -80,7 +80,7 @@ class ProductController extends Controller
         }
 
         if (! empty($filters['search'])) {
-            $query->where('name', 'like', '%'.$filters['search'].'%');
+            $query->whereRaw('LOWER(name) LIKE ?', ['%'.mb_strtolower($filters['search']).'%']);
         }
 
         if (isset($filters['min_price'])) {
@@ -149,7 +149,7 @@ class ProductController extends Controller
 
         $products = Product::query()
             ->where('active', true)
-            ->where('name', 'like', '%'.$validated['q'].'%')
+            ->whereRaw('LOWER(name) LIKE ?', ['%'.mb_strtolower($validated['q']).'%'])
             ->with(['category', 'images', 'variants'])
             ->orderBy('name')
             ->limit(8)
