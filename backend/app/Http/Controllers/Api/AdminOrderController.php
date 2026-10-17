@@ -34,11 +34,13 @@ class AdminOrderController extends Controller
             ->withCount('items')
             ->when($request->query('status'), fn ($query, $status) => $query->where('status', $status))
             ->when($request->query('search'), function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('id', 'like', $search.'%')
-                        ->orWhereHas('user', function ($q2) use ($search) {
-                            $q2->where('name', 'like', '%'.$search.'%')
-                                ->orWhere('email', 'like', '%'.$search.'%');
+                $termino = mb_strtolower($search);
+
+                $query->where(function ($q) use ($search, $termino) {
+                    $q->when(is_numeric($search), fn ($q2) => $q2->orWhere('id', (int) $search))
+                        ->orWhereHas('user', function ($q2) use ($termino) {
+                            $q2->whereRaw('LOWER(name) LIKE ?', ['%'.$termino.'%'])
+                                ->orWhereRaw('LOWER(email) LIKE ?', ['%'.$termino.'%']);
                         });
                 });
             })

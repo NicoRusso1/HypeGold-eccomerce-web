@@ -35,7 +35,7 @@ class AdminProductController extends Controller
             ->withCount('variants')
             ->when(
                 $request->query('search'),
-                fn ($query, $search) => $query->where('name', 'like', '%'.$search.'%'),
+                fn ($query, $search) => $query->whereRaw('LOWER(name) LIKE ?', ['%'.mb_strtolower($search).'%']),
             )
             ->orderByDesc('id')
             ->paginate(15)

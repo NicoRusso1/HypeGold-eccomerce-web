@@ -49,6 +49,10 @@ ng serve
 
 La app queda disponible en `http://localhost:4200`.
 
+## Deploy
+
+El sitio se puede desplegar gratis (como demo) en Vercel (frontend) + Render (backend). Guía paso a paso en [`DEPLOY.md`](DEPLOY.md).
+
 ## Convenciones de Git
 
 - **Ramas:** `main` (estable), `develop` (integración), `feature/HG-123-descripcion-corta`, `fix/HG-123-descripcion-corta`.
