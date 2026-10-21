@@ -111,8 +111,10 @@ class ShoppingAssistantService
 
         $modelo = config('services.gemini.model');
 
+        // Gemini puede tardar bastante (medimos entre 7s y 25s+ en pruebas reales),
+        // asi que dejamos margen generoso antes de darlo por caido.
         $response = Http::withHeader('x-goog-api-key', (string) config('services.gemini.api_key'))
-            ->timeout(25)
+            ->timeout(45)
             ->post("https://generativelanguage.googleapis.com/v1beta/models/{$modelo}:generateContent", [
                 'system_instruction' => ['parts' => [['text' => $this->systemPrompt()]]],
                 'contents' => $contents,
