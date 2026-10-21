@@ -1,0 +1,164 @@
+<div class="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+  @if (abierto()) {
+    <div
+      class="flex h-[32rem] w-[22rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-gold-200/60 bg-surface shadow-xl"
+    >
+      <div class="flex items-center justify-between border-b border-gold-200/60 bg-hg-ivory px-4 py-3">
+        <div>
+          <p class="font-display uppercase tracking-wide text-sm text-hg-black">Asistente HypeGold</p>
+          <p class="text-xs text-hg-charcoal/60">Te ayudo a encontrar tu joya ✨</p>
+        </div>
+        <button
+          type="button"
+          (click)="toggle()"
+          aria-label="Cerrar chat"
+          class="rounded-full p-1.5 text-hg-charcoal transition hover:bg-gold-50 hover:text-gold-600"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div #scrollContainer class="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+        @if (mensajes().length === 0) {
+          <p class="text-sm text-hg-charcoal/70">
+            ¡Hola! Contame qué estás buscando y te recomiendo algo del catálogo.
+          </p>
+          <div class="flex flex-wrap gap-2">
+            @for (sugerencia of sugerencias; track sugerencia) {
+              <button
+                type="button"
+                (click)="enviarDesdeChip(sugerencia)"
+                class="rounded-full border border-gold-200 px-3 py-1.5 text-xs font-medium text-hg-charcoal transition hover:border-gold-400 hover:text-gold-600"
+              >
+                {{ sugerencia }}
+              </button>
+            }
+          </div>
+        }
+
+        @for (item of mensajes(); track $index) {
+          @if (item.role === 'user') {
+            <div class="flex justify-end">
+              <p class="max-w-[85%] rounded-2xl rounded-br-sm bg-gold-400 px-3 py-2 text-sm text-black">
+                {{ item.content }}
+              </p>
+            </div>
+          } @else {
+            <div class="flex flex-col gap-2">
+              <p class="max-w-[85%] rounded-2xl rounded-bl-sm border border-gold-200/60 bg-hg-ivory px-3 py-2 text-sm text-hg-charcoal">
+                {{ item.content }}
+              </p>
+
+              @if (item.products && item.products.length > 0) {
+                <div class="flex flex-col gap-2">
+                  @for (producto of item.products; track producto.id) {
+                    <div class="flex items-center gap-3 rounded-xl border border-gold-200/60 bg-hg-ivory p-2">
+                      <div class="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gold-50">
+                        @if (producto.image) {
+                          <img [src]="producto.image" [alt]="producto.name" class="h-full w-full object-cover" />
+                        } @else {
+                          <div class="flex h-full w-full items-center justify-center text-xl">💍</div>
+                        }
+                      </div>
+                      <div class="min-w-0 flex-1">
+                        <p class="truncate text-xs font-medium text-hg-charcoal">{{ producto.name }}</p>
+                        <p class="text-sm font-semibold text-gold-600">
+                          {{ producto.base_price | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+                        </p>
+                      </div>
+                      <div class="flex shrink-0 flex-col items-end gap-1">
+                        <a
+                          [routerLink]="['/producto', producto.slug]"
+                          class="text-[11px] font-medium text-gold-600 hover:text-gold-700"
+                        >
+                          Ver
+                        </a>
+                        @if (producto.variant_id) {
+                          <button
+                            type="button"
+                            (click)="agregarAlCarrito(producto)"
+                            class="rounded-full border border-gold-300 px-2 py-0.5 text-[11px] font-medium text-hg-black transition hover:border-gold-500 hover:text-gold-600"
+                          >
+                            {{ agregadoId() === producto.id ? '¡Listo! ✓' : 'Agregar' }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        }
+
+        @if (cargando()) {
+          <div class="flex justify-start">
+            <p class="rounded-2xl rounded-bl-sm border border-gold-200/60 bg-hg-ivory px-3 py-2 text-sm text-hg-charcoal/60">
+              Escribiendo...
+            </p>
+          </div>
+        }
+
+        @if (error()) {
+          <div class="flex flex-col items-start gap-2">
+            <p class="rounded-2xl rounded-bl-sm border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              No pudimos responder. Probá de nuevo en un momento.
+            </p>
+            <button
+              type="button"
+              (click)="reintentar()"
+              class="rounded-full border border-gold-300 px-3 py-1 text-xs font-medium text-hg-black transition hover:border-gold-500 hover:text-gold-600"
+            >
+              Reintentar
+            </button>
+          </div>
+        }
+      </div>
+
+      <form (ngSubmit)="onSubmit()" class="flex items-center gap-2 border-t border-gold-200/60 p-3">
+        <input
+          type="text"
+          [ngModel]="inputValue()"
+          (ngModelChange)="inputValue.set($event)"
+          name="mensaje"
+          placeholder="Escribí tu mensaje..."
+          [disabled]="cargando()"
+          class="flex-1 rounded-full border border-gold-200 bg-hg-ivory px-4 py-2 text-sm focus:border-gold-400 focus:outline-none disabled:opacity-60"
+        />
+        <button
+          type="submit"
+          [disabled]="cargando() || !inputValue().trim()"
+          aria-label="Enviar mensaje"
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-400 text-black transition hover:bg-gold-500 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4">
+            <path d="M3.478 2.405a.75.75 0 0 0-.926.94l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.405Z" />
+          </svg>
+        </button>
+      </form>
+    </div>
+  }
+
+  <button
+    type="button"
+    (click)="toggle()"
+    [attr.aria-label]="abierto() ? 'Cerrar asistente' : 'Abrir asistente de compras'"
+    class="flex h-14 w-14 items-center justify-center rounded-full border-[3px] border-hg-ivory bg-gold-400 text-black shadow-lg transition hover:bg-gold-500"
+  >
+    @if (abierto()) {
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-6 w-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+      </svg>
+    } @else {
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-6 w-6">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"
+        />
+      </svg>
+    }
+  </button>
+</div>

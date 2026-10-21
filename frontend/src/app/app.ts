@@ -3,9 +3,10 @@ import { RouterOutlet } from '@angular/router';
 import { Header } from './shared/header/header';
 import { Footer } from './shared/footer/footer';
 import { ConfirmDialog } from './shared/confirm-dialog/confirm-dialog';
+import { AssistantChat } from './shared/assistant-chat/assistant-chat';
 
 @Component({
-  imports: [RouterOutlet, Header, Footer, ConfirmDialog],
+  imports: [RouterOutlet, Header, Footer, ConfirmDialog, AssistantChat],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AddressController;
+use App\Http\Controllers\Api\AssistantController;
 use App\Http\Controllers\Api\AdminCategoryController;
 use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AdminOrderController;
@@ -27,6 +28,8 @@ Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/search', [ProductController::class, 'search']);
 Route::get('/products/{slug}', [ProductController::class, 'show']);
+
+Route::post('/assistant/chat', [AssistantController::class, 'chat'])->middleware('throttle:15,1');
 
 // Mercado Pago llama a esta ruta directamente, sin autenticación de la tienda.
 Route::post('/webhooks/mercadopago', [MercadoPagoWebhookController::class, 'handle']);
